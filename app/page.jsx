@@ -125,6 +125,9 @@ export default function App() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [alertForm, setAlertForm] = useState({ target:'', target_type:'trend', channel:'in_app' })
+  const emailRef = useRef()
+  const passRef = useRef()
+  const compRef = useRef()
 
   useEffect(() => {
     const t = localStorage.getItem('ii_token')
@@ -214,7 +217,7 @@ export default function App() {
   // ── Auth ──
   if (!user) {
     const isLogin = authMode === 'login'
-    const emailRef = useRef(); const passRef = useRef(); const compRef = useRef()
+    
     const submit = () => isLogin
       ? login(emailRef.current?.value, passRef.current?.value)
       : register(emailRef.current?.value, passRef.current?.value, compRef.current?.value)
