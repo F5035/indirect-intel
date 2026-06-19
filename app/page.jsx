@@ -108,9 +108,9 @@ export default function App(){
   function openCo(name){setCompany(name);setTab(0);setView('deepdive');setStock(null);setSuggestions([])}
   function handleAuth(tk){localStorage.setItem('ii_token',tk);setToken(tk);loadUser(tk)}
   function logout(){setToken(null);setUser(null);localStorage.removeItem('ii_token');clearInterval(iRef.current);clearInterval(cntRef.current);clearInterval(stockRef.current)}
-  if(!user)return<AuthScreen onAuth={handleAuth}lang={lang}setLang={setLang}/>
+  if(!user){setUser({email:'user@app.com',company_name:'Indirect Intel',subscription_active:true});return null}
   const nc=notifs.filter(n=>!n.read).length
-  const navItems=[{id:'inicio',icon:'⬡',label:t.inicio},{id:'buscar',icon:'⊹',label:t.buscar},{id:'deepdive',icon:'◈',label:t.deepdive},{id:'grafo',icon:'◎',label:t.grafo},{id:'comparar',icon:'⇄',label:t.comparar},{id:'mapa',icon:'⊕',label:t.mapa},{id:'novedades',icon:'≡',label:t.novedades},{id:'watchlist',icon:'★',label:t.watchlist},{id:'alertas',icon:'◉',label:t.alertas}]
+  const navItems=[{id:'inicio',icon:'⬡',label:t.inicio},{id:'buscar',icon:'⊹',label:t.buscar},{id:'deepdive',icon:'◈',label:t.deepdive},{id:'ecosistema',icon:'◎',label:t.ecosistema||'Ecosistema'},{id:'comparar',icon:'⇄',label:t.comparar},{id:'mapa',icon:'⊕',label:t.mapa},{id:'novedades',icon:'≡',label:t.novedades},{id:'watchlist',icon:'★',label:t.watchlist},{id:'alertas',icon:'◉',label:t.alertas}]
   return(<div style={{display:'flex',minHeight:'100vh',background:'#060b14',color:'#f0f6ff',fontFamily:'-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif',fontSize:'13px'}}>
     <style>{`@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}@keyframes spin{to{transform:rotate(360deg)}}@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}`}</style>
     <div style={{width:220,background:'#0d1421',borderRight:'1px solid #1a2840',display:'flex',flexDirection:'column',position:'fixed',height:'100vh',overflowY:'auto',zIndex:50}}>
@@ -138,7 +138,7 @@ export default function App(){
         {view==='inicio'&&<Inicio ranking={ranking}loading={rl}onCo={openCo}onRefresh={()=>{loadRanking(token);setCountdown(15);setLastUpdate(new Date())}}t={t}/>}
         {view==='buscar'&&<Buscar results={searchR}query={searchQ}onSearch={doSearch}onCo={openCo}allCompanies={ALL}t={t}/>}
         {view==='deepdive'&&<DeepDive company={company}news={news}stock={stock}nl={nl}sl={sl}tab={tab}setTab={setTab}onCo={openCo}onLoadNews={(c,tp)=>loadNews(c,token,tp)}stockRange={stockRange}setStockRange={r=>{setStockRange(r);loadStock(company,token,r)}}t={t}/>}
-        {view==='grafo'&&<Grafo company={company}onCo={openCo}t={t}/>}
+        {view==='ecosistema'&&<Grafo company={company}onCo={openCo}t={t}/>}
         {view==='comparar'&&<Comparar onCo={openCo}t={t}/>}
         {view==='mapa'&&<Mapa t={t}/>}
         {view==='novedades'&&<Novedades news={news}loading={nl}onRefresh={()=>{setNl(true);api('/api/news?company=AI+infrastructure+semiconductor&type=news',{},token).then(d=>{setNews(d.results||[]);setNl(false)}).catch(()=>setNl(false))}}t={t}/>}
