@@ -1,0 +1,2116 @@
+[
+  {
+    "id": 1,
+    "name": "NVIDIA",
+    "industry": "Semiconductores",
+    "country": "USA",
+    "type": "public",
+    "categories": [
+      "Chips"
+    ],
+    "summary": "Líder en GPUs para entrenamiento e inferencia de modelos de IA. Sus chips H100/H200 son el estándar de la industria para data centers de IA.",
+    "evidence": [
+      {
+        "type": "filing",
+        "description": "10-K 2024: ingresos de data center crecieron 217% YoY a $47.5B, impulsados por demanda de IA.",
+        "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=NVDA&type=10-K"
+      }
+    ],
+    "risks": [
+      "Valuación extremadamente exigente",
+      "Alta concentración en pocos hyperscalers",
+      "Riesgo regulatorio en exportaciones a China"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 30,
+      "financial_health": 14,
+      "momentum": 10,
+      "valuation": 5,
+      "risk": 7,
+      "market_growth": 15
+    },
+    "keywords": [
+      "nvidia",
+      "gpu",
+      "chips",
+      "semiconductores",
+      "ia",
+      "inteligencia artificial",
+      "data center",
+      "openai"
+    ]
+  },
+  {
+    "id": 2,
+    "name": "AMD",
+    "industry": "Semiconductores",
+    "country": "USA",
+    "type": "public",
+    "categories": [
+      "Chips"
+    ],
+    "summary": "Competidor directo de NVIDIA en GPUs para IA con su línea MI300X. Creciente adopción en hyperscalers como Microsoft y Meta.",
+    "evidence": [
+      {
+        "type": "earnings_call",
+        "description": "Q4 2024 earnings: MI300X revenue supera $5B, con guía de $7.5B para 2025 en AI chips.",
+        "url": "https://ir.amd.com/news-releases/news-release-details/amd-reports-fourth-quarter-and-full-year-2024-financial-results"
+      }
+    ],
+    "risks": [
+      "Atraso en software ecosystem vs NVIDIA CUDA",
+      "Márgenes más bajos que NVIDIA"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 27,
+      "financial_health": 12,
+      "momentum": 9,
+      "valuation": 8,
+      "risk": 8,
+      "market_growth": 14
+    },
+    "keywords": [
+      "amd",
+      "gpu",
+      "chips",
+      "semiconductores",
+      "ia",
+      "mi300",
+      "data center",
+      "openai"
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Intel",
+    "industry": "Semiconductores",
+    "country": "USA",
+    "type": "public",
+    "categories": [
+      "Chips"
+    ],
+    "summary": "Fabricante de CPUs y acelerador de IA Gaudi. Compite en inferencia de IA y manufactura de chips con su división foundry.",
+    "evidence": [
+      {
+        "type": "filing",
+        "description": "10-K 2024: división Intel Foundry y Gaudi 3 como pilares de estrategia IA.",
+        "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=INTC&type=10-K"
+      }
+    ],
+    "risks": [
+      "Pérdida de cuota de mercado",
+      "Alta deuda",
+      "Ejecución manufacturera compleja"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 20,
+      "financial_health": 8,
+      "momentum": 5,
+      "valuation": 9,
+      "risk": 5,
+      "market_growth": 11
+    },
+    "keywords": [
+      "intel",
+      "cpu",
+      "chips",
+      "semiconductores",
+      "ia",
+      "gaudi",
+      "foundry",
+      "openai"
+    ]
+  },
+  {
+    "id": 4,
+    "name": "TSMC",
+    "industry": "Manufactura de Semiconductores",
+    "country": "Taiwan",
+    "type": "public",
+    "categories": [
+      "Manufactura"
+    ],
+    "summary": "Principal fabricante de chips del mundo. Manufactura los GPUs de NVIDIA, AMD y Apple. Sin TSMC no hay chips de IA.",
+    "evidence": [
+      {
+        "type": "filing",
+        "description": "Reporte anual 2024: AI-related revenue supera 15% del total, creciendo 3x YoY.",
+        "url": "https://investor.tsmc.com/english/annual-reports"
+      }
+    ],
+    "risks": [
+      "Riesgo geopolítico Taiwan-China",
+      "Alta concentración de clientes",
+      "CAPEX intensivo"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 29,
+      "financial_health": 13,
+      "momentum": 10,
+      "valuation": 8,
+      "risk": 6,
+      "market_growth": 14
+    },
+    "keywords": [
+      "tsmc",
+      "manufactura",
+      "chips",
+      "semiconductores",
+      "ia",
+      "taiwan",
+      "foundry",
+      "openai"
+    ]
+  },
+  {
+    "id": 5,
+    "name": "Equinix",
+    "industry": "Data Centers",
+    "country": "USA",
+    "type": "public",
+    "categories": [
+      "Data Centers"
+    ],
+    "summary": "Mayor operador de data centers colocados del mundo. Infraestructura crítica para empresas de IA que necesitan conectividad y espacio de servidores.",
+    "evidence": [
+      {
+        "type": "filing",
+        "description": "10-K 2024: xScale data centers orientados a hyperscalers crecen 40%+ en demanda.",
+        "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=EQIX&type=10-K"
+      }
+    ],
+    "risks": [
+      "Alto CAPEX",
+      "Sensibilidad a tasas de interés como REIT",
+      "Competencia de hyperscalers propios"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 26,
+      "financial_health": 11,
+      "momentum": 8,
+      "valuation": 7,
+      "risk": 8,
+      "market_growth": 13
+    },
+    "keywords": [
+      "equinix",
+      "data center",
+      "infraestructura",
+      "ia",
+      "colocacion",
+      "servidores",
+      "openai"
+    ]
+  },
+  {
+    "id": 6,
+    "name": "Digital Realty",
+    "industry": "Data Centers",
+    "country": "USA",
+    "type": "public",
+    "categories": [
+      "Data Centers"
+    ],
+    "summary": "REIT de data centers con presencia global. Sus instalaciones alojan la infraestructura de cloud e IA de grandes empresas tecnológicas.",
+    "evidence": [
+      {
+        "type": "earnings_call",
+        "description": "Q3 2024: record de reservas de energía para AI workloads, backlog de $8.5B.",
+        "url": "https://ir.digitalrealty.com/"
+      }
+    ],
+    "risks": [
+      "Sensibilidad a tasas de interés",
+      "Necesidades de financiamiento constante",
+      "Competencia intensa"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 24,
+      "financial_health": 10,
+      "momentum": 8,
+      "valuation": 8,
+      "risk": 7,
+      "market_growth": 12
+    },
+    "keywords": [
+      "digital realty",
+      "data center",
+      "reit",
+      "infraestructura",
+      "ia",
+      "cloud",
+      "openai"
+    ]
+  },
+  {
+    "id": 7,
+    "name": "Vertiv Holdings",
+    "industry": "Infraestructura de Data Centers",
+    "country": "USA",
+    "type": "public",
+    "categories": [
+      "Data Centers",
+      "Energía"
+    ],
+    "summary": "Proveedor de infraestructura crítica para data centers: sistemas de enfriamiento, UPS y gestión de energía. La IA requiere 10x más energía por rack.",
+    "evidence": [
+      {
+        "type": "earnings_call",
+        "description": "Q4 2024: backlog de $6.3B, crecimiento del 40% impulsado por demanda de cooling para IA.",
+        "url": "https://investors.vertiv.com/"
+      }
+    ],
+    "risks": [
+      "Supply chain compleja",
+      "Márgenes bajo presión por costos de materiales"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 28,
+      "financial_health": 11,
+      "momentum": 10,
+      "valuation": 7,
+      "risk": 8,
+      "market_growth": 15
+    },
+    "keywords": [
+      "vertiv",
+      "cooling",
+      "refrigeracion",
+      "data center",
+      "energia",
+      "ia",
+      "ups",
+      "infraestructura",
+      "openai"
+    ]
+  },
+  {
+    "id": 8,
+    "name": "Eaton Corporation",
+    "industry": "Gestión de Energía",
+    "country": "USA",
+    "type": "public",
+    "categories": [
+      "Energía"
+    ],
+    "summary": "Proveedor de sistemas de gestión de energía para data centers. Sus PDUs y UPS son componentes críticos en instalaciones de IA.",
+    "evidence": [
+      {
+        "type": "filing",
+        "description": "10-K 2024: segmento electrical Americas crece 17%, mencionando data centers e IA como driver principal.",
+        "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=ETN&type=10-K"
+      }
+    ],
+    "risks": [
+      "Menor exposición pura a IA que peers",
+      "Ciclos de capital lentos en utilities"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 22,
+      "financial_health": 12,
+      "momentum": 7,
+      "valuation": 8,
+      "risk": 9,
+      "market_growth": 11
+    },
+    "keywords": [
+      "eaton",
+      "energia",
+      "data center",
+      "ia",
+      "ups",
+      "pdu",
+      "gestion energia",
+      "openai"
+    ]
+  },
+  {
+    "id": 9,
+    "name": "Vistra Energy",
+    "industry": "Generación de Energía",
+    "country": "USA",
+    "type": "public",
+    "categories": [
+      "Energía"
+    ],
+    "summary": "Generadora de energía con activos nucleares y de gas. La IA está disparando la demanda eléctrica y beneficia a generadoras con capacidad instalada.",
+    "evidence": [
+      {
+        "type": "news",
+        "description": "2024: Vistra reactiva capacidad de generación para atender contratos con data centers de IA en Texas.",
+        "url": "https://www.vistracorp.com/investors/"
+      }
+    ],
+    "risks": [
+      "Regulación energética",
+      "Volatilidad de precios de commodities",
+      "Deuda alta"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 21,
+      "financial_health": 9,
+      "momentum": 9,
+      "valuation": 8,
+      "risk": 7,
+      "market_growth": 10
+    },
+    "keywords": [
+      "vistra",
+      "energia",
+      "nuclear",
+      "electricidad",
+      "data center",
+      "ia",
+      "generacion",
+      "openai"
+    ]
+  },
+  {
+    "id": 10,
+    "name": "Constellation Energy",
+    "industry": "Generación de Energía Nuclear",
+    "country": "USA",
+    "type": "public",
+    "categories": [
+      "Energía"
+    ],
+    "summary": "Mayor operador nuclear de USA. Firmó acuerdo histórico con Microsoft para reabastecer Three Mile Island para alimentar data centers de IA.",
+    "evidence": [
+      {
+        "type": "news",
+        "description": "Sep 2024: acuerdo con Microsoft para suministro de energía nuclear de Three Mile Island por 20 años.",
+        "url": "https://www.constellationenergy.com/newsroom/2024/Constellation-to-Launch-Crane-Clean-Energy-Center-Restoring-Jobs-and-Carbon-Free-Power-to-The-Grid.html"
+      }
+    ],
+    "risks": [
+      "Riesgo de ejecución en reapertura de plantas",
+      "Regulación nuclear",
+      "Dependencia de grandes clientes"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 29,
+      "financial_health": 11,
+      "momentum": 10,
+      "valuation": 7,
+      "risk": 7,
+      "market_growth": 13
+    },
+    "keywords": [
+      "constellation",
+      "nuclear",
+      "energia",
+      "microsoft",
+      "ia",
+      "data center",
+      "three mile island",
+      "openai"
+    ]
+  },
+  {
+    "id": 11,
+    "name": "Arista Networks",
+    "industry": "Networking",
+    "country": "USA",
+    "type": "public",
+    "categories": [
+      "Networking",
+      "Data Centers"
+    ],
+    "summary": "Proveedor de switches de red de alta velocidad para data centers de IA. Sus productos son usados por Meta, Microsoft y otros hyperscalers.",
+    "evidence": [
+      {
+        "type": "earnings_call",
+        "description": "Q3 2024: AI networking revenue supera $750M, con Microsoft y Meta como principales clientes.",
+        "url": "https://investors.arista.com/"
+      }
+    ],
+    "risks": [
+      "Alta concentración en pocos clientes",
+      "Competencia de Cisco y vendors propios de hyperscalers"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 28,
+      "financial_health": 13,
+      "momentum": 9,
+      "valuation": 7,
+      "risk": 8,
+      "market_growth": 14
+    },
+    "keywords": [
+      "arista",
+      "networking",
+      "red",
+      "switches",
+      "data center",
+      "ia",
+      "hyperscaler",
+      "openai"
+    ]
+  },
+  {
+    "id": 12,
+    "name": "Broadcom",
+    "industry": "Semiconductores / Networking",
+    "country": "USA",
+    "type": "public",
+    "categories": [
+      "Chips",
+      "Networking"
+    ],
+    "summary": "Fabrica ASICs de IA para Google (TPU) y Meta. Sus chips de networking son críticos en data centers de IA. Adquirió VMware para software.",
+    "evidence": [
+      {
+        "type": "earnings_call",
+        "description": "FY2024: AI revenue de $12.2B, guidance de $60-90B en TAM de AI ASICs para 2027.",
+        "url": "https://investors.broadcom.com/"
+      }
+    ],
+    "risks": [
+      "Deuda post-adquisición VMware",
+      "Concentración en pocos clientes AI"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 29,
+      "financial_health": 11,
+      "momentum": 10,
+      "valuation": 7,
+      "risk": 7,
+      "market_growth": 15
+    },
+    "keywords": [
+      "broadcom",
+      "asic",
+      "chips",
+      "networking",
+      "ia",
+      "tpu",
+      "google",
+      "meta",
+      "openai"
+    ]
+  },
+  {
+    "id": 13,
+    "name": "Marvell Technology",
+    "industry": "Semiconductores",
+    "country": "USA",
+    "type": "public",
+    "categories": [
+      "Chips",
+      "Networking"
+    ],
+    "summary": "Diseñador de ASICs de IA y chips de optical networking. Colabora con Amazon, Microsoft y Google en chips de inferencia custom.",
+    "evidence": [
+      {
+        "type": "earnings_call",
+        "description": "Q3 FY2025: AI revenue de $1.1B, crecimiento del 98% YoY, con Amazon y Google como socios.",
+        "url": "https://ir.marvell.com/"
+      }
+    ],
+    "risks": [
+      "Ciclos de desarrollo de ASICs largo",
+      "Competencia de NVIDIA en plataformas completas"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 27,
+      "financial_health": 11,
+      "momentum": 10,
+      "valuation": 8,
+      "risk": 8,
+      "market_growth": 13
+    },
+    "keywords": [
+      "marvell",
+      "asic",
+      "chips",
+      "networking",
+      "ia",
+      "optical",
+      "amazon",
+      "google",
+      "openai"
+    ]
+  },
+  {
+    "id": 14,
+    "name": "Micron Technology",
+    "industry": "Memoria y Almacenamiento",
+    "country": "USA",
+    "type": "public",
+    "categories": [
+      "Chips"
+    ],
+    "summary": "Fabricante de HBM3E (High Bandwidth Memory), componente crítico en GPUs de IA. La demanda de HBM está disparada por IA.",
+    "evidence": [
+      {
+        "type": "filing",
+        "description": "10-K 2024: HBM revenue supera $1B, con crecimiento del 150% YoY impulsado por NVIDIA y AMD.",
+        "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=MU&type=10-K"
+      }
+    ],
+    "risks": [
+      "Ciclicidad del mercado de memoria",
+      "Competencia de Samsung y SK Hynix"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 27,
+      "financial_health": 12,
+      "momentum": 9,
+      "valuation": 8,
+      "risk": 7,
+      "market_growth": 14
+    },
+    "keywords": [
+      "micron",
+      "memoria",
+      "hbm",
+      "chips",
+      "ia",
+      "gpu",
+      "almacenamiento",
+      "dram",
+      "openai"
+    ]
+  },
+  {
+    "id": 15,
+    "name": "SK Hynix",
+    "industry": "Memoria y Almacenamiento",
+    "country": "Corea del Sur",
+    "type": "public",
+    "categories": [
+      "Chips"
+    ],
+    "summary": "Principal proveedor de HBM3E para NVIDIA. Captura más del 50% del mercado de HBM, componente clave en GPUs H100/H200.",
+    "evidence": [
+      {
+        "type": "news",
+        "description": "2024: SK Hynix es proveedor exclusivo inicial de HBM3E para NVIDIA H200, con ingresos de $5B+.",
+        "url": "https://investor.skhynix.com/"
+      }
+    ],
+    "risks": [
+      "Concentración extrema en NVIDIA como cliente",
+      "Riesgo geopolítico Corea"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 28,
+      "financial_health": 12,
+      "momentum": 10,
+      "valuation": 8,
+      "risk": 7,
+      "market_growth": 14
+    },
+    "keywords": [
+      "sk hynix",
+      "hynix",
+      "memoria",
+      "hbm",
+      "chips",
+      "ia",
+      "nvidia",
+      "corea",
+      "openai"
+    ]
+  },
+  {
+    "id": 16,
+    "name": "Lam Research",
+    "industry": "Equipamiento Semiconductor",
+    "country": "USA",
+    "type": "public",
+    "categories": [
+      "Manufactura"
+    ],
+    "summary": "Fabrica equipos de deposición y grabado para manufactura de chips. Esencial para producir los chips de IA de TSMC, Samsung e Intel.",
+    "evidence": [
+      {
+        "type": "earnings_call",
+        "description": "Q2 FY2025: revenue de $4.17B, con gate-all-around y advanced packaging como drivers de IA.",
+        "url": "https://investor.lamresearch.com/"
+      }
+    ],
+    "risks": [
+      "Restricciones de exportación a China",
+      "Ciclicidad del CAPEX de fabricantes"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 25,
+      "financial_health": 13,
+      "momentum": 8,
+      "valuation": 8,
+      "risk": 7,
+      "market_growth": 12
+    },
+    "keywords": [
+      "lam research",
+      "equipamiento",
+      "semiconductor",
+      "manufactura",
+      "ia",
+      "tsmc",
+      "grabado",
+      "openai"
+    ]
+  },
+  {
+    "id": 17,
+    "name": "ASML",
+    "industry": "Equipamiento Semiconductor",
+    "country": "Países Bajos",
+    "type": "public",
+    "categories": [
+      "Manufactura"
+    ],
+    "summary": "Monopolio en máquinas EUV para fabricar chips avanzados. Sin ASML no puede existir la siguiente generación de chips de IA.",
+    "evidence": [
+      {
+        "type": "filing",
+        "description": "Annual Report 2024: backlog de €36B, toda la industria de AI chips depende de litografía EUV.",
+        "url": "https://www.asml.com/en/investors/annual-report"
+      }
+    ],
+    "risks": [
+      "Restricciones políticas de exportación",
+      "Concentración de clientes (TSMC, Samsung, Intel)"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 30,
+      "financial_health": 14,
+      "momentum": 8,
+      "valuation": 7,
+      "risk": 7,
+      "market_growth": 13
+    },
+    "keywords": [
+      "asml",
+      "euv",
+      "litografia",
+      "manufactura",
+      "chips",
+      "ia",
+      "semiconductores",
+      "paises bajos",
+      "openai"
+    ]
+  },
+  {
+    "id": 18,
+    "name": "Applied Materials",
+    "industry": "Equipamiento Semiconductor",
+    "country": "USA",
+    "type": "public",
+    "categories": [
+      "Manufactura"
+    ],
+    "summary": "Mayor proveedor de equipos de deposición de materiales para fabricar chips. Sus equipos son críticos para producir chips de IA avanzados.",
+    "evidence": [
+      {
+        "type": "earnings_call",
+        "description": "Q4 FY2024: AI chip demand driving record orders, backlog supera $7.5B.",
+        "url": "https://ir.appliedmaterials.com/"
+      }
+    ],
+    "risks": [
+      "Controles de exportación China",
+      "Ciclicidad del sector"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 24,
+      "financial_health": 12,
+      "momentum": 8,
+      "valuation": 8,
+      "risk": 7,
+      "market_growth": 12
+    },
+    "keywords": [
+      "applied materials",
+      "equipamiento",
+      "semiconductor",
+      "manufactura",
+      "ia",
+      "deposicion",
+      "chips",
+      "openai"
+    ]
+  },
+  {
+    "id": 19,
+    "name": "Corning",
+    "industry": "Fibra Óptica",
+    "country": "USA",
+    "type": "public",
+    "categories": [
+      "Fibra Óptica"
+    ],
+    "summary": "Líder mundial en fibra óptica. Los data centers de IA requieren cantidades masivas de fibra para conectividad de alta velocidad.",
+    "evidence": [
+      {
+        "type": "earnings_call",
+        "description": "Q3 2024: optical communications segment up 36%, driven by AI data center buildout demand.",
+        "url": "https://investor.corning.com/"
+      }
+    ],
+    "risks": [
+      "Demanda cíclica",
+      "Competencia asiática en fibra básica"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 25,
+      "financial_health": 11,
+      "momentum": 8,
+      "valuation": 8,
+      "risk": 8,
+      "market_growth": 11
+    },
+    "keywords": [
+      "corning",
+      "fibra optica",
+      "conectividad",
+      "data center",
+      "ia",
+      "optical",
+      "cables",
+      "openai"
+    ]
+  },
+  {
+    "id": 20,
+    "name": "Palo Alto Networks",
+    "industry": "Ciberseguridad",
+    "country": "USA",
+    "type": "public",
+    "categories": [
+      "Ciberseguridad"
+    ],
+    "summary": "Líder en ciberseguridad empresarial. Los data centers de IA son objetivos de alto valor que requieren protección avanzada.",
+    "evidence": [
+      {
+        "type": "earnings_call",
+        "description": "FY2024: SASE y AI Security revenue superan $1B, con cloud AI infrastructure como segmento de mayor crecimiento.",
+        "url": "https://investors.paloaltonetworks.com/"
+      }
+    ],
+    "risks": [
+      "Valoración alta",
+      "Competencia intensa en seguridad cloud"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 22,
+      "financial_health": 12,
+      "momentum": 8,
+      "valuation": 7,
+      "risk": 8,
+      "market_growth": 11
+    },
+    "keywords": [
+      "palo alto",
+      "ciberseguridad",
+      "seguridad",
+      "data center",
+      "ia",
+      "cloud",
+      "sase",
+      "openai"
+    ]
+  },
+  {
+    "id": 21,
+    "name": "CrowdStrike",
+    "industry": "Ciberseguridad",
+    "country": "USA",
+    "type": "public",
+    "categories": [
+      "Ciberseguridad"
+    ],
+    "summary": "Plataforma de ciberseguridad nativa en IA. Protege la infraestructura de IA de grandes empresas y es adoptada masivamente en data centers.",
+    "evidence": [
+      {
+        "type": "filing",
+        "description": "10-K 2024: ARR de $3.7B, con AI workload protection como nuevo segmento de alta demanda.",
+        "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=CRWD&type=10-K"
+      }
+    ],
+    "risks": [
+      "Incidente de julio 2024 afectó reputación",
+      "Valuación premium"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 22,
+      "financial_health": 11,
+      "momentum": 7,
+      "valuation": 7,
+      "risk": 7,
+      "market_growth": 11
+    },
+    "keywords": [
+      "crowdstrike",
+      "ciberseguridad",
+      "seguridad",
+      "ia",
+      "cloud",
+      "endpoint",
+      "data center",
+      "openai"
+    ]
+  },
+  {
+    "id": 22,
+    "name": "Super Micro Computer",
+    "industry": "Servidores",
+    "country": "USA",
+    "type": "public",
+    "categories": [
+      "Servidores"
+    ],
+    "summary": "Fabricante de servidores optimizados para IA. Sus servidores de alta densidad son preferidos para instalar GPUs NVIDIA en data centers.",
+    "evidence": [
+      {
+        "type": "filing",
+        "description": "FY2024 10-K: revenue de $14.9B, crecimiento del 110% impulsado por AI server demand.",
+        "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=SMCI&type=10-K"
+      }
+    ],
+    "risks": [
+      "Problemas contables y retrasos en auditoría 2024",
+      "Alta concentración en NVIDIA como proveedor"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 26,
+      "financial_health": 8,
+      "momentum": 9,
+      "valuation": 9,
+      "risk": 5,
+      "market_growth": 14
+    },
+    "keywords": [
+      "supermicro",
+      "super micro",
+      "servidores",
+      "ia",
+      "gpu",
+      "nvidia",
+      "data center",
+      "openai"
+    ]
+  },
+  {
+    "id": 23,
+    "name": "Dell Technologies",
+    "industry": "Servidores e Infraestructura",
+    "country": "USA",
+    "type": "public",
+    "categories": [
+      "Servidores"
+    ],
+    "summary": "Gran proveedor de servidores AI-optimized (PowerEdge). Distribuye servidores con GPUs NVIDIA a empresas de todos los tamaños.",
+    "evidence": [
+      {
+        "type": "earnings_call",
+        "description": "FY2025 Q3: AI server backlog de $4.5B, crecimiento del 3x YoY en AI infrastructure revenue.",
+        "url": "https://investors.delltechnologies.com/"
+      }
+    ],
+    "risks": [
+      "Márgenes bajos en hardware",
+      "Competencia con distribuidores propios de cloud"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 25,
+      "financial_health": 10,
+      "momentum": 8,
+      "valuation": 9,
+      "risk": 8,
+      "market_growth": 12
+    },
+    "keywords": [
+      "dell",
+      "servidores",
+      "ia",
+      "gpu",
+      "infraestructura",
+      "poweredge",
+      "data center",
+      "openai"
+    ]
+  },
+  {
+    "id": 24,
+    "name": "Hewlett Packard Enterprise",
+    "industry": "Servidores e Infraestructura",
+    "country": "USA",
+    "type": "public",
+    "categories": [
+      "Servidores"
+    ],
+    "summary": "Provee infraestructura AI con sus servidores ProLiant y supercomputadores Cray. Contrata con gobiernos y grandes corporaciones para HPC e IA.",
+    "evidence": [
+      {
+        "type": "earnings_call",
+        "description": "FY2024: AI system revenue de $4.3B, con contratos de supercomputadores para DOE y laboratorios nacionales.",
+        "url": "https://investors.hpe.com/"
+      }
+    ],
+    "risks": [
+      "Márgenes bajos",
+      "Competencia con cloud hyperscalers"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 23,
+      "financial_health": 10,
+      "momentum": 7,
+      "valuation": 9,
+      "risk": 8,
+      "market_growth": 11
+    },
+    "keywords": [
+      "hpe",
+      "hewlett packard",
+      "servidores",
+      "ia",
+      "hpc",
+      "supercomputadoras",
+      "cray",
+      "openai"
+    ]
+  },
+  {
+    "id": 25,
+    "name": "Schneider Electric",
+    "industry": "Gestión de Energía e Infraestructura",
+    "country": "Francia",
+    "type": "public",
+    "categories": [
+      "Energía",
+      "Data Centers"
+    ],
+    "summary": "Proveedor de soluciones de gestión de energía y automatización para data centers. Sus soluciones EcoStruxure son estándar en instalaciones de IA.",
+    "evidence": [
+      {
+        "type": "news",
+        "description": "2024: Schneider reporta crecimiento del 30% en segmento data center, impulsado por demanda de IA.",
+        "url": "https://www.se.com/ww/en/about-us/investor-relations/"
+      }
+    ],
+    "risks": [
+      "Exposición a Europa con menor crecimiento",
+      "Integración de adquisiciones"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 22,
+      "financial_health": 12,
+      "momentum": 8,
+      "valuation": 8,
+      "risk": 8,
+      "market_growth": 11
+    },
+    "keywords": [
+      "schneider electric",
+      "energia",
+      "data center",
+      "ia",
+      "infraestructura",
+      "ups",
+      "cooling",
+      "openai"
+    ]
+  },
+  {
+    "id": 26,
+    "name": "Oklo",
+    "industry": "Energía Nuclear",
+    "country": "USA",
+    "type": "public",
+    "categories": [
+      "Energía"
+    ],
+    "summary": "Startup de reactores nucleares modulares pequeños (SMR). Los data centers de IA buscan energía limpia y confiable, haciendo a Oklo una apuesta a futuro.",
+    "evidence": [
+      {
+        "type": "news",
+        "description": "2024: Oklo firma acuerdos con data centers y operadoras de IA para suministro futuro de energía nuclear.",
+        "url": "https://oklo.com/investors/"
+      }
+    ],
+    "risks": [
+      "Pre-revenue, alto riesgo ejecución",
+      "Aprobación regulatoria pendiente",
+      "Tecnología no probada a escala"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 18,
+      "financial_health": 5,
+      "momentum": 8,
+      "valuation": 5,
+      "risk": 3,
+      "market_growth": 14
+    },
+    "keywords": [
+      "oklo",
+      "nuclear",
+      "smr",
+      "energia",
+      "ia",
+      "data center",
+      "reactores modulares",
+      "openai"
+    ]
+  },
+  {
+    "id": 27,
+    "name": "NuScale Power",
+    "industry": "Energía Nuclear",
+    "country": "USA",
+    "type": "public",
+    "categories": [
+      "Energía"
+    ],
+    "summary": "Desarrolladora de reactores nucleares modulares (SMR). Con la demanda de energía de IA, los SMR son una solución potencial de largo plazo.",
+    "evidence": [
+      {
+        "type": "news",
+        "description": "2024: NuScale en conversaciones con operadores de data centers para contratos de energía nuclear a largo plazo.",
+        "url": "https://ir.nuscalepower.com/"
+      }
+    ],
+    "risks": [
+      "Alto riesgo pre-revenue",
+      "Cancelación de proyecto Idaho 2023",
+      "Competencia de otras fuentes limpias"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 15,
+      "financial_health": 4,
+      "momentum": 6,
+      "valuation": 5,
+      "risk": 3,
+      "market_growth": 12
+    },
+    "keywords": [
+      "nuscale",
+      "nuclear",
+      "smr",
+      "energia",
+      "ia",
+      "data center",
+      "openai"
+    ]
+  },
+  {
+    "id": 28,
+    "name": "Coherent Corp",
+    "industry": "Componentes Ópticos",
+    "country": "USA",
+    "type": "public",
+    "categories": [
+      "Fibra Óptica"
+    ],
+    "summary": "Fabrica transceptores ópticos y componentes para redes de alta velocidad en data centers de IA. Demanda récord en 800G y 1.6T transceivers.",
+    "evidence": [
+      {
+        "type": "earnings_call",
+        "description": "Q1 FY2025: data center revenue up 78% YoY, con 800G transceivers como producto de mayor crecimiento.",
+        "url": "https://www.coherent.com/company/investors.html"
+      }
+    ],
+    "risks": [
+      "Alta competencia en componentes ópticos",
+      "Ciclos cortos de producto"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 26,
+      "financial_health": 10,
+      "momentum": 9,
+      "valuation": 8,
+      "risk": 7,
+      "market_growth": 13
+    },
+    "keywords": [
+      "coherent",
+      "optico",
+      "transceptores",
+      "fibra",
+      "data center",
+      "ia",
+      "networking",
+      "openai"
+    ]
+  },
+  {
+    "id": 29,
+    "name": "Amphenol",
+    "industry": "Conectores y Cables",
+    "country": "USA",
+    "type": "public",
+    "categories": [
+      "Data Centers"
+    ],
+    "summary": "Mayor fabricante de conectores eléctricos y de alta velocidad. Sus productos conectan GPUs, servidores y switches en data centers de IA.",
+    "evidence": [
+      {
+        "type": "earnings_call",
+        "description": "Q3 2024: IT datacom segment (data centers) up 70%+ YoY, con AI como principal driver.",
+        "url": "https://investors.amphenol.com/"
+      }
+    ],
+    "risks": [
+      "Exposición a múltiples mercados reduce pureza AI",
+      "Competencia en conectores estándar"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 24,
+      "financial_health": 13,
+      "momentum": 9,
+      "valuation": 8,
+      "risk": 9,
+      "market_growth": 12
+    },
+    "keywords": [
+      "amphenol",
+      "conectores",
+      "cables",
+      "data center",
+      "ia",
+      "servidores",
+      "gpu",
+      "openai"
+    ]
+  },
+  {
+    "id": 30,
+    "name": "TE Connectivity",
+    "industry": "Conectores y Componentes",
+    "country": "Suiza",
+    "type": "public",
+    "categories": [
+      "Data Centers"
+    ],
+    "summary": "Proveedor de conectores y soluciones de conectividad para data centers. Sus productos son usados en racks de servidores de IA de alta densidad.",
+    "evidence": [
+      {
+        "type": "filing",
+        "description": "FY2024 10-K: Communications segment (data centers) reporta crecimiento del 25%+ por demanda de AI infrastructure.",
+        "url": "https://investors.te.com/"
+      }
+    ],
+    "risks": [
+      "Diversificación reduce exposición pura a IA",
+      "Presión de precios en conectores estándar"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 22,
+      "financial_health": 12,
+      "momentum": 7,
+      "valuation": 8,
+      "risk": 9,
+      "market_growth": 11
+    },
+    "keywords": [
+      "te connectivity",
+      "conectores",
+      "componentes",
+      "data center",
+      "ia",
+      "cables",
+      "servidores",
+      "openai"
+    ]
+  },
+  {
+    "id": 31,
+    "name": "Bloom Energy",
+    "industry": "Generación de Energía Distribuida",
+    "country": "USA",
+    "type": "public",
+    "categories": [
+      "Energía"
+    ],
+    "summary": "Fabrica celdas de combustible para generación de energía on-site. Los data centers buscan alternativas a la red eléctrica para IA, haciendo sus soluciones atractivas.",
+    "evidence": [
+      {
+        "type": "news",
+        "description": "2024: Bloom Energy firma contratos con operadores de data centers para generación de energía on-site para AI workloads.",
+        "url": "https://ir.bloomenergy.com/"
+      }
+    ],
+    "risks": [
+      "Márgenes bajos",
+      "Dependencia de subsidios",
+      "Tecnología de hidrógeno incierta"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 20,
+      "financial_health": 7,
+      "momentum": 7,
+      "valuation": 7,
+      "risk": 6,
+      "market_growth": 10
+    },
+    "keywords": [
+      "bloom energy",
+      "energia",
+      "celda combustible",
+      "data center",
+      "ia",
+      "generacion distribuida",
+      "openai"
+    ]
+  },
+  {
+    "id": 32,
+    "name": "Celestica",
+    "industry": "Manufactura Electrónica",
+    "country": "Canadá",
+    "type": "public",
+    "categories": [
+      "Servidores",
+      "Manufactura"
+    ],
+    "summary": "Manufactura servidores y equipos de networking para hyperscalers. Beneficiario directo del boom de data centers de IA.",
+    "evidence": [
+      {
+        "type": "earnings_call",
+        "description": "Q3 2024: Connectivity & Cloud Solutions up 68%, con hyperscalers de IA como Microsoft y Google como clientes clave.",
+        "url": "https://ir.celestica.com/"
+      }
+    ],
+    "risks": [
+      "Márgenes bajos en manufactura por contrato",
+      "Dependencia de hyperscalers"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 25,
+      "financial_health": 10,
+      "momentum": 9,
+      "valuation": 9,
+      "risk": 8,
+      "market_growth": 12
+    },
+    "keywords": [
+      "celestica",
+      "manufactura",
+      "servidores",
+      "data center",
+      "ia",
+      "hyperscaler",
+      "networking",
+      "openai"
+    ]
+  },
+  {
+    "id": 33,
+    "name": "Flex Ltd",
+    "industry": "Manufactura Electrónica",
+    "country": "Singapur",
+    "type": "public",
+    "categories": [
+      "Servidores",
+      "Manufactura"
+    ],
+    "summary": "EMS (Electronic Manufacturing Services) que fabrica hardware de IA por contrato para hyperscalers. Crece con la expansión de data centers.",
+    "evidence": [
+      {
+        "type": "earnings_call",
+        "description": "Q2 FY2025: Cloud & Data Center segment up 54%, con AI infrastructure como principal driver.",
+        "url": "https://investors.flex.com/"
+      }
+    ],
+    "risks": [
+      "Márgenes bajos en manufactura por contrato",
+      "Exposición geopolítica de supply chain"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 22,
+      "financial_health": 10,
+      "momentum": 8,
+      "valuation": 9,
+      "risk": 8,
+      "market_growth": 11
+    },
+    "keywords": [
+      "flex",
+      "manufactura",
+      "servidores",
+      "data center",
+      "ia",
+      "ems",
+      "cloud",
+      "openai"
+    ]
+  },
+  {
+    "id": 34,
+    "name": "IronMountain",
+    "industry": "Almacenamiento y Data Centers",
+    "country": "USA",
+    "type": "public",
+    "categories": [
+      "Data Centers"
+    ],
+    "summary": "Operador de data centers y almacenamiento de datos. Su negocio de data centers crece por la demanda de colocación para IA.",
+    "evidence": [
+      {
+        "type": "earnings_call",
+        "description": "Q3 2024: Data center segment up 23% YoY, con AI workloads como principal driver de nuevas reservas.",
+        "url": "https://investor.ironmountain.com/"
+      }
+    ],
+    "risks": [
+      "Legado de almacenamiento físico pesa en márgenes",
+      "CAPEX intensivo como REIT"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 21,
+      "financial_health": 9,
+      "momentum": 7,
+      "valuation": 8,
+      "risk": 8,
+      "market_growth": 10
+    },
+    "keywords": [
+      "iron mountain",
+      "data center",
+      "almacenamiento",
+      "ia",
+      "colocacion",
+      "reit",
+      "openai"
+    ]
+  },
+  {
+    "id": 35,
+    "name": "Onto Innovation",
+    "industry": "Equipamiento Semiconductor",
+    "country": "USA",
+    "type": "public",
+    "categories": [
+      "Manufactura"
+    ],
+    "summary": "Fabrica sistemas de inspección óptica para manufactura de semiconductores avanzados. Sus equipos inspeccionan los chips de IA en producción.",
+    "evidence": [
+      {
+        "type": "earnings_call",
+        "description": "Q3 2024: advanced packaging revenue up 40%, driven by HBM and AI chip inspection demand.",
+        "url": "https://ir.ontoinnovation.com/"
+      }
+    ],
+    "risks": [
+      "Nicho pequeño",
+      "Alta dependencia de gasto CAPEX de fabricantes"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 22,
+      "financial_health": 11,
+      "momentum": 8,
+      "valuation": 8,
+      "risk": 8,
+      "market_growth": 11
+    },
+    "keywords": [
+      "onto innovation",
+      "inspeccion",
+      "semiconductores",
+      "manufactura",
+      "ia",
+      "hbm",
+      "chips",
+      "openai"
+    ]
+  },
+  {
+    "id": 36,
+    "name": "Cambricon Technologies",
+    "industry": "Semiconductores IA",
+    "country": "China",
+    "type": "public",
+    "categories": [
+      "Chips"
+    ],
+    "summary": "Diseñador chino de chips de IA. Con restricciones de exportación de NVIDIA a China, Cambricon es beneficiario del mercado doméstico chino de chips de IA.",
+    "evidence": [
+      {
+        "type": "news",
+        "description": "2024: Restricciones de exportación de NVIDIA impulsan demanda de chips Cambricon en data centers chinos.",
+        "url": "https://www.cambricon.com/index.php?m=content&c=index&a=lists&catid=27"
+      }
+    ],
+    "risks": [
+      "Riesgo geopolítico",
+      "Brecha tecnológica vs NVIDIA",
+      "Mercado limitado a China"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 19,
+      "financial_health": 8,
+      "momentum": 8,
+      "valuation": 7,
+      "risk": 5,
+      "market_growth": 10
+    },
+    "keywords": [
+      "cambricon",
+      "chips",
+      "ia",
+      "china",
+      "semiconductores",
+      "gpu",
+      "openai"
+    ]
+  },
+  {
+    "id": 37,
+    "name": "Lattice Semiconductor",
+    "industry": "Semiconductores",
+    "country": "USA",
+    "type": "public",
+    "categories": [
+      "Chips"
+    ],
+    "summary": "Diseñador de FPGAs de bajo consumo. Sus chips son usados en control de data centers y aplicaciones de edge AI.",
+    "evidence": [
+      {
+        "type": "filing",
+        "description": "10-K 2024: Communications & Computing segment (data centers) representan 60%+ de revenue.",
+        "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=LSCC&type=10-K"
+      }
+    ],
+    "risks": [
+      "Menor exposición directa a AI training vs peers",
+      "Competencia de Intel y Xilinx/AMD"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 20,
+      "financial_health": 12,
+      "momentum": 6,
+      "valuation": 8,
+      "risk": 9,
+      "market_growth": 10
+    },
+    "keywords": [
+      "lattice",
+      "fpga",
+      "semiconductores",
+      "ia",
+      "edge",
+      "data center",
+      "chips",
+      "openai"
+    ]
+  },
+  {
+    "id": 38,
+    "name": "Wolfspeed",
+    "industry": "Semiconductores de Potencia",
+    "country": "USA",
+    "type": "public",
+    "categories": [
+      "Energía",
+      "Chips"
+    ],
+    "summary": "Fabrica semiconductores de carburo de silicio (SiC) para gestión eficiente de energía. Los data centers de IA necesitan conversión de energía más eficiente.",
+    "evidence": [
+      {
+        "type": "filing",
+        "description": "FY2024 10-K: power devices para data centers como segmento de crecimiento en aplicaciones de alta eficiencia.",
+        "url": "https://investors.wolfspeed.com/"
+      }
+    ],
+    "risks": [
+      "Alta deuda",
+      "Pérdidas operativas",
+      "Ramp-up de manufactura complejo"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 18,
+      "financial_health": 4,
+      "momentum": 5,
+      "valuation": 6,
+      "risk": 4,
+      "market_growth": 11
+    },
+    "keywords": [
+      "wolfspeed",
+      "sic",
+      "carburo silicio",
+      "energia",
+      "semiconductores",
+      "data center",
+      "ia",
+      "openai"
+    ]
+  },
+  {
+    "id": 39,
+    "name": "Qualcomm",
+    "industry": "Semiconductores",
+    "country": "USA",
+    "type": "public",
+    "categories": [
+      "Chips"
+    ],
+    "summary": "Diseñador de chips para edge AI y dispositivos móviles. Sus chips Snapdragon con NPUs permiten IA en el borde, complementando la infraestructura de data centers.",
+    "evidence": [
+      {
+        "type": "earnings_call",
+        "description": "FY2024: AI PC y edge inference como nuevo segmento de crecimiento, con Copilot+ PCs adoptando chips Snapdragon.",
+        "url": "https://investor.qualcomm.com/"
+      }
+    ],
+    "risks": [
+      "Exposición a ciclo de smartphones",
+      "Menor exposición a data center AI vs NVIDIA/AMD"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 20,
+      "financial_health": 13,
+      "momentum": 7,
+      "valuation": 8,
+      "risk": 8,
+      "market_growth": 10
+    },
+    "keywords": [
+      "qualcomm",
+      "chips",
+      "ia",
+      "edge",
+      "snapdragon",
+      "npu",
+      "semiconductores",
+      "openai"
+    ]
+  },
+  {
+    "id": 40,
+    "name": "Taiwan Semiconductor (TSMC ADR)",
+    "industry": "Manufactura de Semiconductores",
+    "country": "Taiwan",
+    "type": "public",
+    "categories": [
+      "Manufactura"
+    ],
+    "summary": "ADR americano de TSMC para inversores que prefieren acceder desde mercados USA. Misma exposición a manufactura de chips de IA.",
+    "evidence": [
+      {
+        "type": "filing",
+        "description": "20-F SEC 2024: AI chips representan crecimiento principal, con N3 y N2 nodes para AI aceleradores.",
+        "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=TSM&type=20-F"
+      }
+    ],
+    "risks": [
+      "Riesgo geopolítico",
+      "Mismos riesgos que TSMC directo"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 29,
+      "financial_health": 14,
+      "momentum": 8,
+      "valuation": 7,
+      "risk": 6,
+      "market_growth": 13
+    },
+    "keywords": [
+      "tsm",
+      "tsmc",
+      "adr",
+      "manufactura",
+      "chips",
+      "ia",
+      "semiconductores",
+      "taiwan",
+      "openai"
+    ]
+  },
+  {
+    "id": 41,
+    "name": "Credo Technology",
+    "industry": "Semiconductores de Conectividad",
+    "country": "USA",
+    "type": "public",
+    "categories": [
+      "Networking",
+      "Chips"
+    ],
+    "summary": "Diseña chips de conectividad de alta velocidad para data centers de IA. Sus Active Electrical Cables (AEC) reemplazan cables ópticos costosos.",
+    "evidence": [
+      {
+        "type": "earnings_call",
+        "description": "Q2 FY2025: revenue up 70%+ YoY, con Amazon como cliente principal para AI data center connectivity.",
+        "url": "https://ir.credotech.com/"
+      }
+    ],
+    "risks": [
+      "Alta concentración en Amazon",
+      "Pequeña capitalización",
+      "Tecnología en riesgo de commoditización"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 26,
+      "financial_health": 10,
+      "momentum": 10,
+      "valuation": 7,
+      "risk": 7,
+      "market_growth": 14
+    },
+    "keywords": [
+      "credo",
+      "conectividad",
+      "chips",
+      "ia",
+      "data center",
+      "networking",
+      "aec",
+      "amazon",
+      "openai"
+    ]
+  },
+  {
+    "id": 42,
+    "name": "Astera Labs",
+    "industry": "Semiconductores de Conectividad",
+    "country": "USA",
+    "type": "public",
+    "categories": [
+      "Networking",
+      "Chips"
+    ],
+    "summary": "Fabrica chips de conectividad PCIe y CXL para data centers de IA. Sus productos permiten mayor velocidad de comunicación entre GPUs y CPUs.",
+    "evidence": [
+      {
+        "type": "filing",
+        "description": "S-1 / 10-K 2024: revenue de $396M, 100% derivado de conectividad para data centers de IA con NVIDIA como socio.",
+        "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=ALAB&type=10-K"
+      }
+    ],
+    "risks": [
+      "Alta concentración en NVIDIA ecosystem",
+      "Valuación post-IPO exigente"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 27,
+      "financial_health": 11,
+      "momentum": 10,
+      "valuation": 6,
+      "risk": 7,
+      "market_growth": 14
+    },
+    "keywords": [
+      "astera labs",
+      "conectividad",
+      "pcie",
+      "cxl",
+      "chips",
+      "ia",
+      "data center",
+      "nvidia",
+      "openai"
+    ]
+  },
+  {
+    "id": 43,
+    "name": "Arm Holdings",
+    "industry": "Diseño de Chips (IP)",
+    "country": "Reino Unido",
+    "type": "public",
+    "categories": [
+      "Chips"
+    ],
+    "summary": "Licencia arquitecturas de procesadores usadas en chips de IA de Apple, Qualcomm, NVIDIA y prácticamente todos los actores del ecosistema.",
+    "evidence": [
+      {
+        "type": "filing",
+        "description": "FY2024 20-F: royalties de AI chips crecen 65% YoY, con v9 architecture siendo adoptada en aceleradores de IA.",
+        "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=ARM&type=20-F"
+      }
+    ],
+    "risks": [
+      "Valuación muy exigente post-IPO",
+      "SoftBank como accionista mayoritario",
+      "Modelo de licencias puede ser desafiado"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 27,
+      "financial_health": 12,
+      "momentum": 9,
+      "valuation": 5,
+      "risk": 7,
+      "market_growth": 14
+    },
+    "keywords": [
+      "arm",
+      "chips",
+      "ia",
+      "arquitectura",
+      "procesadores",
+      "licencias",
+      "semiconductores",
+      "openai"
+    ]
+  },
+  {
+    "id": 44,
+    "name": "Cadence Design Systems",
+    "industry": "Software de Diseño de Chips (EDA)",
+    "country": "USA",
+    "type": "public",
+    "categories": [
+      "Manufactura",
+      "Chips"
+    ],
+    "summary": "Software EDA para diseñar chips de IA. Sin herramientas de Cadence, no se pueden diseñar los GPUs y ASICs de próxima generación.",
+    "evidence": [
+      {
+        "type": "earnings_call",
+        "description": "Q3 2024: AI-driven chip design demand impulsa 19% revenue growth, con todos los hyperscalers como clientes.",
+        "url": "https://investor.cadence.com/"
+      }
+    ],
+    "risks": [
+      "Mercado oligopólico con Synopsys como competidor",
+      "Ciclos de licenciamiento complejos"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 25,
+      "financial_health": 14,
+      "momentum": 8,
+      "valuation": 7,
+      "risk": 9,
+      "market_growth": 12
+    },
+    "keywords": [
+      "cadence",
+      "eda",
+      "diseño chips",
+      "software",
+      "ia",
+      "semiconductores",
+      "gpu",
+      "openai"
+    ]
+  },
+  {
+    "id": 45,
+    "name": "Synopsys",
+    "industry": "Software de Diseño de Chips (EDA)",
+    "country": "USA",
+    "type": "public",
+    "categories": [
+      "Manufactura",
+      "Chips"
+    ],
+    "summary": "Otro gigante de software EDA para diseño de chips. Sus herramientas son esenciales para diseñar chips de IA avanzados.",
+    "evidence": [
+      {
+        "type": "earnings_call",
+        "description": "FY2024: AI chip design complexity drives 20%+ revenue growth en core EDA tools.",
+        "url": "https://investor.synopsys.com/"
+      }
+    ],
+    "risks": [
+      "Regulación antimonopolio en adquisición de Ansys",
+      "Mercado maduro EDA"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 24,
+      "financial_health": 13,
+      "momentum": 8,
+      "valuation": 7,
+      "risk": 8,
+      "market_growth": 12
+    },
+    "keywords": [
+      "synopsys",
+      "eda",
+      "diseño chips",
+      "software",
+      "ia",
+      "semiconductores",
+      "ansys",
+      "openai"
+    ]
+  },
+  {
+    "id": 46,
+    "name": "Nvent Electric",
+    "industry": "Gestión Térmica",
+    "country": "USA",
+    "type": "public",
+    "categories": [
+      "Energía",
+      "Data Centers"
+    ],
+    "summary": "Fabrica soluciones de cooling y enclosures para data centers. El liquid cooling para racks de GPUs de IA es su segmento de mayor crecimiento.",
+    "evidence": [
+      {
+        "type": "earnings_call",
+        "description": "Q3 2024: Data Center Solutions up 45%, con liquid cooling para AI GPU racks como driver principal.",
+        "url": "https://investors.nvent.com/"
+      }
+    ],
+    "risks": [
+      "Menor escala que Vertiv",
+      "Exposición a mercados industriales más lentos"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 23,
+      "financial_health": 11,
+      "momentum": 8,
+      "valuation": 8,
+      "risk": 8,
+      "market_growth": 12
+    },
+    "keywords": [
+      "nvent",
+      "cooling",
+      "refrigeracion",
+      "data center",
+      "ia",
+      "liquid cooling",
+      "gpu",
+      "openai"
+    ]
+  },
+  {
+    "id": 47,
+    "name": "Advanced Energy Industries",
+    "industry": "Componentes de Energía para Semiconductores",
+    "country": "USA",
+    "type": "public",
+    "categories": [
+      "Manufactura",
+      "Energía"
+    ],
+    "summary": "Fabrica fuentes de poder de precisión para equipos de manufactura de semiconductores. Cada máquina que hace chips de IA usa sus productos.",
+    "evidence": [
+      {
+        "type": "earnings_call",
+        "description": "Q3 2024: Semiconductor segment up 18%, con advanced node manufacturing para AI chips como driver.",
+        "url": "https://ir.advancedenergy.com/"
+      }
+    ],
+    "risks": [
+      "Exposición cíclica a gasto CAPEX de semicondutores",
+      "Nicho estrecho"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 21,
+      "financial_health": 11,
+      "momentum": 7,
+      "valuation": 8,
+      "risk": 8,
+      "market_growth": 10
+    },
+    "keywords": [
+      "advanced energy",
+      "energia",
+      "semiconductores",
+      "manufactura",
+      "ia",
+      "fuentes poder",
+      "openai"
+    ]
+  },
+  {
+    "id": 48,
+    "name": "Benchmark Electronics",
+    "industry": "Manufactura Electrónica",
+    "country": "USA",
+    "type": "public",
+    "categories": [
+      "Servidores",
+      "Manufactura"
+    ],
+    "summary": "EMS que manufactura servidores y hardware de IA por contrato para empresas medianas que no pueden fabricar en-house.",
+    "evidence": [
+      {
+        "type": "earnings_call",
+        "description": "Q2 2024: Computing segment (AI servers) up 30%+ driven by demand from AI infrastructure buildout.",
+        "url": "https://ir.bench.com/"
+      }
+    ],
+    "risks": [
+      "Pequeña capitalización",
+      "Márgenes bajos en manufactura por contrato"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 19,
+      "financial_health": 10,
+      "momentum": 7,
+      "valuation": 9,
+      "risk": 8,
+      "market_growth": 9
+    },
+    "keywords": [
+      "benchmark electronics",
+      "manufactura",
+      "servidores",
+      "ia",
+      "ems",
+      "data center",
+      "openai"
+    ]
+  },
+  {
+    "id": 49,
+    "name": "Vertiv (REIT-adjacente)",
+    "industry": "Infraestructura Crítica",
+    "country": "USA",
+    "type": "public",
+    "categories": [
+      "Energía",
+      "Data Centers"
+    ],
+    "summary": "Nota: Ver entrada principal de Vertiv Holdings. Esta entrada cubre su segmento de liquid cooling específicamente para clusters de GPU.",
+    "evidence": [
+      {
+        "type": "news",
+        "description": "2024: Vertiv lanza soluciones de liquid cooling para racks de 100kW+ con GPUs NVIDIA H100/H200.",
+        "url": "https://investors.vertiv.com/"
+      }
+    ],
+    "risks": [
+      "Supply chain de componentes de refrigeración",
+      "Competencia de Schneider y Stulz"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 26,
+      "financial_health": 11,
+      "momentum": 10,
+      "valuation": 7,
+      "risk": 8,
+      "market_growth": 14
+    },
+    "keywords": [
+      "vertiv",
+      "liquid cooling",
+      "gpu",
+      "ia",
+      "refrigeracion",
+      "data center",
+      "nvidia",
+      "openai"
+    ]
+  },
+  {
+    "id": 50,
+    "name": "Wiwynn",
+    "industry": "Servidores para Hyperscalers",
+    "country": "Taiwan",
+    "type": "public",
+    "categories": [
+      "Servidores"
+    ],
+    "summary": "Subsidiaria de Foxconn que fabrica servidores de IA para Meta y Microsoft. Beneficiario directo del gasto en infraestructura de IA de hyperscalers.",
+    "evidence": [
+      {
+        "type": "news",
+        "description": "2024: Wiwynn reporta revenue record por demanda de AI servers de Meta y Microsoft, crecimiento del 80%+ YoY.",
+        "url": "https://www.wiwynn.com/investor-relations"
+      }
+    ],
+    "risks": [
+      "Concentración en pocos clientes",
+      "Empresa taiwanesa con menor liquidez para inversores internacionales"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 23,
+      "financial_health": 10,
+      "momentum": 9,
+      "valuation": 8,
+      "risk": 7,
+      "market_growth": 12
+    },
+    "keywords": [
+      "wiwynn",
+      "foxconn",
+      "servidores",
+      "ia",
+      "meta",
+      "microsoft",
+      "hyperscaler",
+      "taiwan",
+      "openai"
+    ]
+  },
+  {
+    "id": 51,
+    "name": "Celestica (Networking)",
+    "industry": "Networking para Hyperscalers",
+    "country": "Canadá",
+    "type": "public",
+    "categories": [
+      "Networking",
+      "Manufactura"
+    ],
+    "summary": "Además de servidores, Celestica fabrica switches de red de alta velocidad para data centers de IA, compitiendo con Arista en hardware de white-box.",
+    "evidence": [
+      {
+        "type": "earnings_call",
+        "description": "Q3 2024: networking products for AI data centers up 85%+ YoY, con hyperscalers como clientes principales.",
+        "url": "https://ir.celestica.com/"
+      }
+    ],
+    "risks": [
+      "Dependencia de hyperscalers para adoptar white-box networking",
+      "Competencia de Arista en software"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 24,
+      "financial_health": 10,
+      "momentum": 9,
+      "valuation": 9,
+      "risk": 8,
+      "market_growth": 12
+    },
+    "keywords": [
+      "celestica",
+      "networking",
+      "switches",
+      "ia",
+      "data center",
+      "white-box",
+      "hyperscaler",
+      "openai"
+    ]
+  },
+  {
+    "id": 52,
+    "name": "GE Vernova",
+    "industry": "Energía y Turbinas",
+    "country": "USA",
+    "type": "public",
+    "categories": [
+      "Energía"
+    ],
+    "summary": "Spinoff de GE enfocada en energía. Sus turbinas de gas y soluciones de grid son críticas para satisfacer la demanda eléctrica adicional de los data centers de IA.",
+    "evidence": [
+      {
+        "type": "earnings_call",
+        "description": "Q3 2024: grid solutions backlog supera $8B, con data center power demand como driver de nuevos contratos.",
+        "url": "https://investors.gevernova.com/"
+      }
+    ],
+    "risks": [
+      "Ciclos de capital largo en energía",
+      "Márgenes bajos en turbinas",
+      "Competencia de Siemens Energy"
+    ],
+    "score_breakdown": {
+      "evidence_quality": 22,
+      "financial_health": 11,
+      "momentum": 9,
+      "valuation": 8,
+      "risk": 8,
+      "market_growth": 11
+    },
+    "keywords": [
+      "ge vernova",
+      "energia",
+      "turbinas",
+      "grid",
+      "ia",
+      "data center",
+      "electricidad",
+      "openai"
+    ]
+  }
+]
