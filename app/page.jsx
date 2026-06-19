@@ -124,6 +124,9 @@ export default function App() {
   const [expanded, setExpanded] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const emailRef = React.useRef()
+  const passRef = React.useRef()
+  const compRef = React.useRef()
   const [alertForm, setAlertForm] = useState({ target:'', target_type:'trend', channel:'in_app' })
 
   useEffect(() => {
@@ -214,7 +217,6 @@ export default function App() {
   // ── Auth ──
   if (!user) {
     const isLogin = authMode === 'login'
-    const emailRef = useRef(); const passRef = useRef(); const compRef = useRef()
     const submit = () => isLogin
       ? login(emailRef.current?.value, passRef.current?.value)
       : register(emailRef.current?.value, passRef.current?.value, compRef.current?.value)
