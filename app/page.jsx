@@ -1,586 +1,214 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
-
-const C = {
-  bg:'#0a0e1a',surf:'#111827',surf2:'#1a2235',surf3:'#1f2a40',
-  border:'#1e2d45',accent:'#3b82f6',green:'#10b981',warn:'#f59e0b',danger:'#ef4444',
-  text:'#e6edf3',muted:'#64748b',muted2:'#94a3b8',purple:'#8b5cf6'
-}
-function scoreColor(s){return s>=75?C.green:s>=50?C.warn:C.danger}
-function scoreBg(s){return s>=75?'#0d2d1f':s>=50?'#2d1f0d':'#2d0d0d'}
-function scoreBorder(s){return s>=75?'#155e40':s>=50?'#5e3d0f':'#5e1515'}
-const LC=['#3b82f6','#10b981','#f59e0b','#8b5cf6','#ef4444','#06b6d4']
-function lc(n){return LC[n.charCodeAt(0)%LC.length]}
-const s={
-  app:{display:'flex',minHeight:'100vh',background:C.bg,color:C.text,fontFamily:'-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif',fontSize:'13px'},
-  sidebar:{width:220,background:C.surf,borderRight:`1px solid ${C.border}`,display:'flex',flexDirection:'column',position:'fixed',height:'100vh',overflowY:'auto',zIndex:50},
-  main:{marginLeft:220,flex:1,minHeight:'100vh'},
-  topbar:{background:C.surf,borderBottom:`1px solid ${C.border}`,padding:'0 24px',height:52,display:'flex',alignItems:'center',gap:12,position:'sticky',top:0,zIndex:40},
-  content:{padding:24},
-  card:{background:C.surf,border:`1px solid ${C.border}`,borderRadius:12,padding:16},
-  metric:{background:C.surf2,borderRadius:8,padding:14},
-  btn:{display:'inline-flex',alignItems:'center',gap:6,padding:'6px 12px',borderRadius:8,fontSize:12,fontWeight:500,cursor:'pointer',border:`1px solid ${C.border}`,background:C.surf2,color:C.muted2},
-  btnP:{background:C.accent,borderColor:C.accent,color:'#fff'},
-  row:{display:'flex',alignItems:'center',gap:12,padding:'10px 12px',borderRadius:8,cursor:'pointer',borderBottom:`1px solid ${C.border}`},
-  tab:{padding:'8px 14px',cursor:'pointer',fontSize:12,color:C.muted2,borderBottom:'2px solid transparent',marginBottom:-1},
-  disc:{background:'#0d1a2d',border:`1px solid #1e3a5f`,borderRadius:8,padding:'8px 14px',color:'#60a0d4',fontSize:11,marginBottom:20},
-}
-
+const LC=['#00d4ff','#7b61ff','#00ff94','#ff6b35','#ffd60a','#ff4d8f']
+const lc=n=>LC[n?.charCodeAt(0)%LC.length]||LC[0]
+const sc=s=>s>=75?'#00ff94':s>=50?'#ffd60a':'#ff4444'
+const sbg=s=>s>=75?'#001f0f':s>=50?'#1f1500':'#1f0000'
+const sborder=s=>s>=75?'#00ff9444':s>=50?'#ffd60a44':'#ff444444'
 async function api(path,opts={},token){
   const h={'Content-Type':'application/json'}
-  if(token) h['Authorization']=`Bearer ${token}`
+  if(token)h['Authorization']=`Bearer ${token}`
   const r=await fetch(path,{headers:h,...opts})
   const d=await r.json()
-  if(!r.ok) throw new Error(d.detail||'Error')
+  if(!r.ok)throw new Error(d.detail||'Error')
   return d
 }
-
+function LiveDot(){return(<span style={{display:'inline-flex',alignItems:'center',gap:4}}><span style={{width:6,height:6,borderRadius:'50%',background:'#00ff94',display:'inline-block',boxShadow:'0 0 6px #00ff94',animation:'pulse 1.5s infinite'}}/><span style={{fontSize:10,color:'#00ff94',fontWeight:600}}>EN VIVO</span></span>)}
+function ScoreRing({score,size=56}){const r=size*.4,c=2*Math.PI*r,fill=(score/100)*c,color=sc(score);return(<svg width={size}height={size}viewBox={`0 0 ${size} ${size}`}><circle cx={size/2}cy={size/2}r={r}fill="none"stroke="#1a2840"strokeWidth={size*.1}/><circle cx={size/2}cy={size/2}r={r}fill="none"stroke={color}strokeWidth={size*.1}strokeDasharray={`${fill} ${c}`}strokeLinecap="round"transform={`rotate(-90 ${size/2} ${size/2})`}style={{filter:`drop-shadow(0 0 6px ${color}88)`}}/><text x={size/2}y={size/2+4}textAnchor="middle"fill={color}fontSize={size*.22}fontWeight="700"fontFamily="sans-serif">{score}</text></svg>)}
+function TickerBar({companies}){if(!companies?.length)return null;const items=[...companies,...companies];return(<div style={{background:'#060b14',borderBottom:'1px solid #0d1421',overflow:'hidden',height:28,display:'flex',alignItems:'center'}}><div style={{display:'flex',gap:0,animation:'ticker 50s linear infinite',whiteSpace:'nowrap'}}>{items.map((c,i)=>(<span key={i} style={{padding:'0 20px',fontSize:11,color:'#4a5f80',borderRight:'1px solid #0d1421',display:'inline-flex',alignItems:'center',gap:6}}><span style={{color:'#f0f6ff',fontWeight:600}}>{c.name.split(' ')[0]}</span><span style={{color:sc(c.exposure_score),fontWeight:700}}>{c.exposure_score}</span>{c.trending&&<span style={{color:'#00ff94',fontSize:9}}>▲</span>}</span>))}</div></div>)}
+function AuthScreen({onAuth}){const[mode,setMode]=useState('login');const[loading,setLoading]=useState(false);const[err,setErr]=useState(null);const eRef=useRef(),pRef=useRef(),cRef=useRef();const isL=mode==='login';async function submit(){setLoading(true);setErr(null);try{const body=isL?{email:eRef.current.value,password:pRef.current.value}:{email:eRef.current.value,password:pRef.current.value,company_name:cRef.current.value};const d=await api(isL?'/api/auth/login':'/api/auth/register',{method:'POST',body:JSON.stringify(body)});onAuth(d.access_token)}catch(e){setErr(e.message)};setLoading(false)}
+return(<div style={{minHeight:'100vh',background:'#060b14',display:'flex',alignItems:'center',justifyContent:'center'}}><div style={{width:420}}><div style={{textAlign:'center',marginBottom:40}}><div style={{display:'inline-flex',alignItems:'center',gap:10,marginBottom:12}}><div style={{width:40,height:40,borderRadius:10,background:'linear-gradient(135deg,#00d4ff,#7b61ff)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:20,boxShadow:'0 0 20px #00d4ff44'}}>⬡</div><div style={{fontSize:24,fontWeight:800,background:'linear-gradient(90deg,#00d4ff,#7b61ff)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',letterSpacing:'-1px'}}>Indirect Intel</div></div><div style={{fontSize:12,color:'#4a5f80'}}>Inteligencia de inversión indirecta · IA Infrastructure</div></div><div style={{background:'#0d1421',border:'1px solid #1a2840',borderRadius:16,padding:32}}><div style={{fontSize:16,fontWeight:700,color:'#f0f6ff',marginBottom:24}}>{isL?'Iniciar sesión':'Crear cuenta'}</div><div style={{marginBottom:14}}><div style={{fontSize:11,color:'#4a5f80',marginBottom:6,textTransform:'uppercase',letterSpacing:'0.5px'}}>Email</div><input ref={eRef}type="email"style={{width:'100%',background:'#111c2d',border:'1px solid #1a2840',borderRadius:8,padding:'10px 14px',color:'#f0f6ff',fontSize:13,outline:'none'}}placeholder="analista@consultora.com"onKeyDown={e=>e.key==='Enter'&&submit()}/></div><div style={{marginBottom:isL?20:14}}><div style={{fontSize:11,color:'#4a5f80',marginBottom:6,textTransform:'uppercase',letterSpacing:'0.5px'}}>Contraseña</div><input ref={pRef}type="password"style={{width:'100%',background:'#111c2d',border:'1px solid #1a2840',borderRadius:8,padding:'10px 14px',color:'#f0f6ff',fontSize:13,outline:'none'}}placeholder="••••••••"onKeyDown={e=>e.key==='Enter'&&submit()}/></div>{!isL&&<div style={{marginBottom:20}}><div style={{fontSize:11,color:'#4a5f80',marginBottom:6,textTransform:'uppercase',letterSpacing:'0.5px'}}>Nombre de la consultora</div><input ref={cRef}type="text"style={{width:'100%',background:'#111c2d',border:'1px solid #1a2840',borderRadius:8,padding:'10px 14px',color:'#f0f6ff',fontSize:13,outline:'none'}}placeholder="Alpha Capital"onKeyDown={e=>e.key==='Enter'&&submit()}/></div>}{err&&<div style={{color:'#ff4444',fontSize:12,marginBottom:14,padding:'8px 12px',background:'#1f0000',borderRadius:6,border:'1px solid #ff444433'}}>❌ {err}</div>}<button onClick={submit}style={{width:'100%',padding:'12px',borderRadius:8,border:'none',cursor:'pointer',fontSize:14,fontWeight:600,background:'linear-gradient(90deg,#00d4ff,#7b61ff)',color:'#060b14',boxShadow:'0 0 20px #00d4ff44'}}>{loading?'Cargando...':isL?'Entrar':'Crear cuenta'}</button><div style={{textAlign:'center',marginTop:16,fontSize:12,color:'#4a5f80'}}>{isL?<>¿No tenés cuenta? <span style={{color:'#00d4ff',cursor:'pointer'}}onClick={()=>{setMode('register');setErr(null)}}>Registrate gratis</span></>:<>¿Ya tenés cuenta? <span style={{color:'#00d4ff',cursor:'pointer'}}onClick={()=>{setMode('login');setErr(null)}}>Iniciá sesión</span></>}</div></div></div></div>)}
 export default function App(){
-  const [token,setToken]=useState(null)
-  const [user,setUser]=useState(null)
-  const [view,setView]=useState('home')
-  const [authMode,setAuthMode]=useState('login')
-  const [company,setCompany]=useState('NVIDIA')
-  const [ranking,setRanking]=useState([])
-  const [news,setNews]=useState([])
-  const [stock,setStock]=useState(null)
-  const [alerts,setAlerts]=useState([])
-  const [notifs,setNotifs]=useState([])
-  const [searchQ,setSearchQ]=useState('')
-  const [searchR,setSearchR]=useState(null)
-  const [tab,setTab]=useState(0)
-  const [rl,setRl]=useState(false)
-  const [nl,setNl]=useState(false)
-  const [sl,setSl]=useState(false)
-  const [err,setErr]=useState(null)
-  const [loading,setLoading]=useState(false)
-  const eRef=useRef(),pRef=useRef(),cRef=useRef()
-
-  useEffect(()=>{
-    const t=localStorage.getItem('ii_token')
-    if(t){setToken(t);loadUser(t)}
-  },[])
-
-  async function loadUser(t){
-    try{const u=await api('/api/auth/me',{},t);setUser(u);loadAlerts(t);loadNotifs(t);loadRanking(t)}
-    catch{setToken(null);localStorage.removeItem('ii_token')}
-  }
+  const[token,setToken]=useState(null);const[user,setUser]=useState(null);const[view,setView]=useState('inicio');const[company,setCompany]=useState('NVIDIA');const[ranking,setRanking]=useState([]);const[news,setNews]=useState([]);const[stock,setStock]=useState(null);const[alerts,setAlerts]=useState([]);const[notifs,setNotifs]=useState([]);const[searchQ,setSearchQ]=useState('');const[searchR,setSearchR]=useState(null);const[tab,setTab]=useState(0);const[rl,setRl]=useState(false);const[nl,setNl]=useState(false);const[sl,setSl]=useState(false);const[countdown,setCountdown]=useState(60);const[lastUpdate,setLastUpdate]=useState(null);const[searchInput,setSearchInput]=useState('');const[suggestions,setSuggestions]=useState([]);const iRef=useRef(),cntRef=useRef()
+  const ALL_COMPANIES=['NVIDIA','TSMC','AMD','Broadcom','Arista Networks','Equinix','Vertiv Holdings','Constellation Energy','Super Micro Computer','SK Hynix','ASML','Lam Research','Micron Technology','Palo Alto Networks','CrowdStrike','Corning','Eaton Corporation','GE Vernova','Dell Technologies','Astera Labs','Credo Technology','Arm Holdings','Cadence Design Systems','Synopsys','Marvell Technology','Applied Materials','Intel','Digital Realty','Amphenol','Bloom Energy','NuScale Power','Oklo','Wolfspeed','Celestica','Flex Ltd','Iron Mountain']
+  useEffect(()=>{const t=localStorage.getItem('ii_token');if(t){setToken(t);loadUser(t)}},[])
+  useEffect(()=>{if(!token)return;if(iRef.current)clearInterval(iRef.current);if(cntRef.current)clearInterval(cntRef.current);iRef.current=setInterval(()=>{loadRanking(token);setLastUpdate(new Date());setCountdown(60)},60000);cntRef.current=setInterval(()=>setCountdown(c=>c>0?c-1:60),1000);return()=>{clearInterval(iRef.current);clearInterval(cntRef.current)}},[token])
+  async function loadUser(t){try{const u=await api('/api/auth/me',{},t);setUser(u);loadAlerts(t);loadNotifs(t);loadRanking(t);setLastUpdate(new Date())}catch{setToken(null);localStorage.removeItem('ii_token')}}
   async function loadRanking(t){setRl(true);try{const d=await api('/api/ranking',{},t);setRanking(d.ranking||[])}catch{};setRl(false)}
   async function loadNews(co,t,type='news'){setNl(true);try{const d=await api(`/api/news?company=${encodeURIComponent(co)}&type=${type}`,{},t);setNews(d.results||[])}catch{setNews([])};setNl(false)}
   async function loadStock(co,t){setSl(true);try{const d=await api(`/api/stock?company=${encodeURIComponent(co)}`,{},t);setStock(d)}catch{setStock(null)};setSl(false)}
   async function loadAlerts(t){try{const d=await api('/api/alerts',{},t);setAlerts(d.alerts||[])}catch{}}
   async function loadNotifs(t){try{const d=await api('/api/notifications',{},t);setNotifs(d.notifications||[])}catch{}}
-  async function doSearch(q){if(!q.trim())return;setSearchQ(q);setView('search');try{const d=await api(`/api/search?q=${encodeURIComponent(q)}`,{},token);setSearchR(d)}catch{}}
-  function openCo(name){setCompany(name);setTab(0);setView('deepdive');loadNews(name,token);loadStock(name,token)}
-  async function login(e,p){setLoading(true);setErr(null);try{const d=await api('/api/auth/login',{method:'POST',body:JSON.stringify({email:e,password:p})});localStorage.setItem('ii_token',d.access_token);setToken(d.access_token);await loadUser(d.access_token)}catch(ex){setErr(ex.message)};setLoading(false)}
-  async function register(e,p,c){setLoading(true);setErr(null);try{const d=await api('/api/auth/register',{method:'POST',body:JSON.stringify({email:e,password:p,company_name:c})});localStorage.setItem('ii_token',d.access_token);setToken(d.access_token);await loadUser(d.access_token)}catch(ex){setErr(ex.message)};setLoading(false)}
-  function logout(){setToken(null);setUser(null);localStorage.removeItem('ii_token')}
-
-  if(!user){
-    const isL=authMode==='login'
-    return(
-      <div style={{...s.app,alignItems:'center',justifyContent:'center'}}>
-        <div style={{width:400}}>
-          <div style={{textAlign:'center',marginBottom:32}}>
-            <div style={{fontSize:24,fontWeight:700,color:'#fff',letterSpacing:'-1px'}}>Indirect Intel</div>
-            <div style={{fontSize:12,color:C.muted,marginTop:4}}>Inteligencia de inversión indirecta · IA Infrastructure</div>
-          </div>
-          <div style={s.card}>
-            <div style={{fontSize:16,fontWeight:600,marginBottom:20,color:'#fff'}}>{isL?'Iniciar sesión':'Crear cuenta'}</div>
-            <div style={{marginBottom:12}}><div style={{fontSize:12,color:C.muted,marginBottom:6}}>Email</div><input ref={eRef} type="email" style={{width:'100%',background:C.surf2,border:`1px solid ${C.border}`,borderRadius:8,padding:'10px 12px',color:C.text,fontSize:13,outline:'none'}} placeholder="analista@consultora.com"/></div>
-            <div style={{marginBottom:12}}><div style={{fontSize:12,color:C.muted,marginBottom:6}}>Contraseña</div><input ref={pRef} type="password" style={{width:'100%',background:C.surf2,border:`1px solid ${C.border}`,borderRadius:8,padding:'10px 12px',color:C.text,fontSize:13,outline:'none'}} placeholder="••••••••" onKeyDown={e=>e.key==='Enter'&&(isL?login(eRef.current?.value,pRef.current?.value):register(eRef.current?.value,pRef.current?.value,cRef.current?.value))}/></div>
-            {!isL&&<div style={{marginBottom:12}}><div style={{fontSize:12,color:C.muted,marginBottom:6}}>Consultora</div><input ref={cRef} type="text" style={{width:'100%',background:C.surf2,border:`1px solid ${C.border}`,borderRadius:8,padding:'10px 12px',color:C.text,fontSize:13,outline:'none'}} placeholder="Nombre de la consultora"/></div>}
-            {err&&<div style={{color:C.danger,fontSize:12,marginBottom:12}}>❌ {err}</div>}
-            <button style={{...s.btn,...s.btnP,width:'100%',justifyContent:'center',padding:10,marginTop:4}} onClick={()=>isL?login(eRef.current?.value,pRef.current?.value):register(eRef.current?.value,pRef.current?.value,cRef.current?.value)}>{loading?'Cargando...':isL?'Entrar':'Registrarse'}</button>
-            <div style={{textAlign:'center',marginTop:14,fontSize:12,color:C.muted}}>{isL?<>¿No tenés cuenta? <span style={{color:C.accent,cursor:'pointer'}} onClick={()=>{setAuthMode('register');setErr(null)}}>Registrate</span></>:<>¿Ya tenés cuenta? <span style={{color:C.accent,cursor:'pointer'}} onClick={()=>{setAuthMode('login');setErr(null)}}>Iniciá sesión</span></>}</div>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  const navItems=[
-    {id:'home',icon:'⬡',label:'Inicio'},{id:'search',icon:'⊹',label:'Buscar'},
-    {id:'deepdive',icon:'◈',label:'Deep Dive'},{id:'graph',icon:'◉',label:'Grafo'},
-    {id:'compare',icon:'⇄',label:'Comparativa'},{id:'map',icon:'◎',label:'Mapa'},
-    {id:'feed',icon:'≡',label:'Feed'},{id:'watchlist',icon:'★',label:'Watchlist'},
-    {id:'alerts',icon:'◎',label:'Alertas'},
-  ]
+  async function doSearch(q){if(!q.trim())return;setSearchQ(q);setView('buscar');setSuggestions([]);setSearchInput(q);try{const d=await api(`/api/search?q=${encodeURIComponent(q)}`,{},token);setSearchR(d)}catch{}}
+  function handleSearchInput(val){setSearchInput(val);if(val.length>1){const matches=ALL_COMPANIES.filter(c=>c.toLowerCase().includes(val.toLowerCase())).slice(0,6);setSuggestions(matches)}else{setSuggestions([])}}
+  function openCo(name){setCompany(name);setTab(0);setView('deepdive');loadNews(name,token);loadStock(name,token);setSuggestions([])}
+  function handleAuth(t){localStorage.setItem('ii_token',t);setToken(t);loadUser(t)}
+  function logout(){setToken(null);setUser(null);localStorage.removeItem('ii_token');clearInterval(iRef.current);clearInterval(cntRef.current)}
+  if(!user)return <AuthScreen onAuth={handleAuth}/>
   const nc=notifs.filter(n=>!n.read).length
-
+  const navItems=[{id:'inicio',icon:'⬡',label:'Inicio'},{id:'buscar',icon:'⊹',label:'Buscar'},{id:'deepdive',icon:'◈',label:'Deep Dive'},{id:'grafo',icon:'◎',label:'Grafo'},{id:'comparar',icon:'⇄',label:'Comparar'},{id:'mapa',icon:'⊕',label:'Mapa'},{id:'novedades',icon:'≡',label:'Novedades'},{id:'watchlist',icon:'★',label:'Watchlist'},{id:'alertas',icon:'◉',label:'Alertas'}]
   return(
-    <div style={s.app}>
-      <div style={s.sidebar}>
-        <div style={{padding:'20px 16px',borderBottom:`1px solid ${C.border}`}}>
-          <div style={{fontSize:16,fontWeight:700,color:'#fff',letterSpacing:'-0.5px'}}>Indirect Intel</div>
-          <div style={{fontSize:10,color:C.muted,textTransform:'uppercase',letterSpacing:'1px',marginTop:2}}>IA Infrastructure</div>
+    <div style={{display:'flex',minHeight:'100vh',background:'#060b14',color:'#f0f6ff',fontFamily:'-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif',fontSize:'13px'}}>
+      <style>{`@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}@keyframes spin{to{transform:rotate(360deg)}}@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}`}</style>
+      <div style={{width:220,background:'#0d1421',borderRight:'1px solid #1a2840',display:'flex',flexDirection:'column',position:'fixed',height:'100vh',overflowY:'auto',zIndex:50}}>
+        <div style={{padding:'18px 16px',borderBottom:'1px solid #1a2840'}}>
+          <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:4}}><div style={{width:28,height:28,borderRadius:6,background:'linear-gradient(135deg,#00d4ff,#7b61ff)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:14,boxShadow:'0 0 10px #00d4ff44'}}>⬡</div><div style={{fontSize:15,fontWeight:800,background:'linear-gradient(90deg,#00d4ff,#7b61ff)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',letterSpacing:'-0.5px'}}>Indirect Intel</div></div>
+          <div style={{fontSize:10,color:'#4a5f80',textTransform:'uppercase',letterSpacing:'1px'}}>IA Infrastructure</div>
         </div>
-        <div style={{padding:'8px 0'}}>
-          {navItems.map(n=>(
-            <div key={n.id} style={{display:'flex',alignItems:'center',gap:10,padding:'8px 12px',borderRadius:8,cursor:'pointer',color:view===n.id?C.accent:C.muted2,background:view===n.id?'#1e3a5f':'transparent',margin:'1px 4px',fontSize:13}} onClick={()=>setView(n.id)}>
-              <span style={{width:18,textAlign:'center'}}>{n.icon}</span>{n.label}
-              {n.id==='alerts'&&nc>0&&<span style={{marginLeft:'auto',background:'#2d0d0d',color:C.danger,fontSize:10,padding:'1px 6px',borderRadius:10}}>{nc}</span>}
-            </div>
-          ))}
+        <div style={{padding:'8px 0',flex:1}}>
+          {navItems.map(n=>(<div key={n.id} style={{display:'flex',alignItems:'center',gap:10,padding:'9px 14px',borderRadius:8,cursor:'pointer',margin:'1px 6px',fontSize:13,color:view===n.id?'#00d4ff':'#8899bb',background:view===n.id?'#00d4ff11':'transparent',borderLeft:view===n.id?'2px solid #00d4ff':'2px solid transparent'}} onClick={()=>{setView(n.id);if(n.id==='novedades'){setNl(true);api('/api/news?company=AI+infrastructure+semiconductor&type=news',{},token).then(d=>{setNews(d.results||[]);setNl(false)}).catch(()=>setNl(false))};if(n.id==='alertas'){loadAlerts(token);loadNotifs(token)}}}><span style={{width:16,textAlign:'center',fontSize:14}}>{n.icon}</span>{n.label}{n.id==='alertas'&&nc>0&&<span style={{marginLeft:'auto',background:'#ff444422',color:'#ff4444',fontSize:10,padding:'2px 6px',borderRadius:10,border:'1px solid #ff444444'}}>{nc}</span>}</div>))}
         </div>
-        <div style={{marginTop:'auto',padding:12,borderTop:`1px solid ${C.border}`}}>
-          <div style={{display:'flex',alignItems:'center',gap:8,padding:8,borderRadius:8,background:C.surf2}}>
-            <div style={{width:28,height:28,borderRadius:'50%',background:'linear-gradient(135deg,#3b82f6,#10b981)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:600,color:'#fff',flexShrink:0}}>{user.email?.substring(0,2).toUpperCase()}</div>
-            <div style={{flex:1,overflow:'hidden'}}>
-              <div style={{fontSize:12,fontWeight:500,color:C.text,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{user.company_name}</div>
-              <div style={{fontSize:10,color:C.green}}>Pro · Activo</div>
-            </div>
-            <span style={{cursor:'pointer',color:C.muted,fontSize:14}} onClick={logout}>⊗</span>
-          </div>
-        </div>
+        <div style={{padding:'10px 14px',borderTop:'1px solid #1a2840',borderBottom:'1px solid #1a2840'}}><div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}><LiveDot/><span style={{fontSize:10,color:'#4a5f80'}}>actualiza en {countdown}s</span></div>{lastUpdate&&<div style={{fontSize:10,color:'#2a3f60',marginTop:4}}>Últ: {lastUpdate.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}</div>}</div>
+        <div style={{padding:12}}><div style={{display:'flex',alignItems:'center',gap:8,padding:'8px 10px',borderRadius:8,background:'#111c2d',border:'1px solid #1a2840'}}><div style={{width:28,height:28,borderRadius:'50%',background:'linear-gradient(135deg,#00d4ff,#7b61ff)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:700,color:'#060b14',flexShrink:0}}>{user.email?.substring(0,2).toUpperCase()}</div><div style={{flex:1,overflow:'hidden'}}><div style={{fontSize:11,fontWeight:600,color:'#f0f6ff',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{user.company_name}</div><div style={{fontSize:10,color:'#00ff94'}}>Pro · Activo</div></div><span style={{cursor:'pointer',color:'#4a5f80',fontSize:16}}onClick={logout}>⊗</span></div></div>
       </div>
-      <div style={s.main}>
-        <div style={s.topbar}>
-          <div style={{flex:1,maxWidth:480,position:'relative'}}>
-            <span style={{position:'absolute',left:10,top:'50%',transform:'translateY(-50%)',color:C.muted,fontSize:14}}>⊹</span>
-            <input style={{width:'100%',background:C.surf2,border:`1px solid ${C.border}`,borderRadius:8,padding:'7px 12px 7px 34px',color:C.text,fontSize:13,outline:'none'}} placeholder='Buscá empresa, sector o tendencia...' onKeyDown={e=>e.key==='Enter'&&doSearch(e.target.value)}/>
+      <div style={{marginLeft:220,flex:1,minHeight:'100vh',display:'flex',flexDirection:'column'}}>
+        <TickerBar companies={ranking.slice(0,15)}/>
+        <div style={{background:'#0d1421',borderBottom:'1px solid #1a2840',padding:'0 24px',height:52,display:'flex',alignItems:'center',gap:12,position:'sticky',top:0,zIndex:40}}>
+          <div style={{flex:1,maxWidth:500,position:'relative'}}>
+            <span style={{position:'absolute',left:12,top:'50%',transform:'translateY(-50%)',color:'#4a5f80',fontSize:14}}>⊹</span>
+            <input style={{width:'100%',background:'#111c2d',border:'1px solid #1a2840',borderRadius:8,padding:'8px 14px 8px 36px',color:'#f0f6ff',fontSize:13,outline:'none'}} placeholder='Buscá empresa, sector o tendencia...' value={searchInput} onChange={e=>handleSearchInput(e.target.value)} onKeyDown={e=>e.key==='Enter'&&doSearch(searchInput)} onFocus={e=>e.target.style.borderColor='#00d4ff'} onBlur={e=>{e.target.style.borderColor='#1a2840';setTimeout(()=>setSuggestions([]),200)}}/>
+            {suggestions.length>0&&<div style={{position:'absolute',top:'100%',left:0,right:0,background:'#0d1421',border:'1px solid #1a2840',borderRadius:8,marginTop:4,zIndex:100,overflow:'hidden'}}>{suggestions.map(s=>(<div key={s} style={{padding:'10px 14px',cursor:'pointer',fontSize:13,color:'#8899bb',display:'flex',alignItems:'center',gap:8}} onMouseDown={()=>openCo(s)} onMouseEnter={e=>e.currentTarget.style.background='#111c2d'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}><div style={{width:24,height:24,borderRadius:4,background:lc(s)+'22',color:lc(s),display:'flex',alignItems:'center',justifyContent:'center',fontSize:9,fontWeight:800}}>{s.substring(0,2).toUpperCase()}</div>{s}</div>))}</div>}
           </div>
-          <div style={{display:'flex',gap:8,marginLeft:'auto'}}>
-            <button style={s.btn} onClick={()=>setView('alerts')}>◎ Alertas {nc>0&&<span style={{background:C.danger,color:'#fff',borderRadius:10,padding:'0 4px',fontSize:10}}>{nc}</span>}</button>
-            <button style={{...s.btn,...s.btnP}} onClick={()=>setView('watchlist')}>★ Watchlist</button>
+          <div style={{display:'flex',gap:8,marginLeft:'auto',alignItems:'center'}}>
+            <button style={{display:'inline-flex',alignItems:'center',gap:5,padding:'6px 12px',borderRadius:8,fontSize:12,cursor:'pointer',border:'1px solid #1a2840',background:'#111c2d',color:'#8899bb'}} onClick={()=>{setView('alertas');loadAlerts(token);loadNotifs(token)}}>◉ Alertas {nc>0&&<span style={{background:'#ff4444',color:'#fff',borderRadius:10,padding:'0 5px',fontSize:10}}>{nc}</span>}</button>
+            <button style={{display:'inline-flex',alignItems:'center',gap:5,padding:'6px 14px',borderRadius:8,fontSize:12,cursor:'pointer',background:'linear-gradient(90deg,#00d4ff22,#7b61ff22)',border:'1px solid #00d4ff44',color:'#00d4ff',fontWeight:600}} onClick={()=>setView('watchlist')}>★ Watchlist</button>
           </div>
         </div>
-        <div style={s.content}>
-          <div style={s.disc}>⚠ Contenido informativo, no asesoramiento financiero. No constituye recomendación de compra o venta de activos.</div>
-          {view==='home'&&<Home ranking={ranking} loading={rl} onCo={openCo} onRefresh={()=>loadRanking(token)}/>}
-          {view==='search'&&<Search results={searchR} query={searchQ} onSearch={doSearch} onCo={openCo}/>}
-          {view==='deepdive'&&<DeepDive company={company} news={news} stock={stock} nl={nl} sl={sl} tab={tab} setTab={setTab} onCo={openCo} onLoadNews={(c,t)=>loadNews(c,token,t)}/>}
-          {view==='graph'&&<Graph company={company} onCo={openCo}/>}
-          {view==='compare'&&<Compare onCo={openCo}/>}
-          {view==='map'&&<MapView/>}
-          {view==='feed'&&<Feed token={token}/>}
+        <div style={{background:'#0a1505',borderBottom:'1px solid #1a3a0d',padding:'5px 24px',fontSize:11,color:'#3a5a20'}}>⚠ Contenido informativo — No constituye recomendación de compra o venta de activos financieros</div>
+        <div style={{padding:24,flex:1,animation:'fadeIn .3s ease'}}>
+          {view==='inicio'&&<Inicio ranking={ranking}loading={rl}onCo={openCo}onRefresh={()=>{loadRanking(token);setCountdown(60);setLastUpdate(new Date())}}/>}
+          {view==='buscar'&&<Buscar results={searchR}query={searchQ}onSearch={doSearch}onCo={openCo}allCompanies={ALL_COMPANIES}/>}
+          {view==='deepdive'&&<DeepDive company={company}news={news}stock={stock}nl={nl}sl={sl}tab={tab}setTab={setTab}onCo={openCo}onLoadNews={(c,t)=>loadNews(c,token,t)}/>}
+          {view==='grafo'&&<Grafo company={company}onCo={openCo}/>}
+          {view==='comparar'&&<Comparar onCo={openCo}/>}
+          {view==='mapa'&&<Mapa/>}
+          {view==='novedades'&&<Novedades news={news}loading={nl}onRefresh={()=>{setNl(true);api('/api/news?company=AI+infrastructure+semiconductor&type=news',{},token).then(d=>{setNews(d.results||[]);setNl(false)}).catch(()=>setNl(false))}}/>}
           {view==='watchlist'&&<Watchlist onCo={openCo}/>}
-          {view==='alerts'&&<AlertsView alerts={alerts} notifs={notifs}/>}
+          {view==='alertas'&&<Alertas alerts={alerts}notifs={notifs}token={token}/>}
         </div>
       </div>
     </div>
   )
 }
-
-function Home({ranking,loading,onCo,onRefresh}){
-  const top=ranking.slice(0,8)
-  const emerging=ranking.filter(c=>c.trending).slice(0,3)
-  return(
-    <div>
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20}}>
-        <div><div style={{fontSize:15,fontWeight:600,color:'#fff'}}>Inicio — IA Infrastructure</div><div style={{fontSize:12,color:'#64748b',marginTop:2}}>Actualizado cada hora · {new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})}</div></div>
-        <button style={{display:'inline-flex',alignItems:'center',gap:6,padding:'6px 12px',borderRadius:8,fontSize:12,fontWeight:500,cursor:'pointer',border:'1px solid #1e2d45',background:'#1a2235',color:'#94a3b8'}} onClick={onRefresh}>{loading?'Cargando...':'↺ Actualizar'}</button>
+function Inicio({ranking,loading,onCo,onRefresh}){
+  const top=ranking.slice(0,10);const emerging=ranking.filter(c=>c.trending).slice(0,3);const avg=ranking.length?Math.round(ranking.reduce((a,c)=>a+c.exposure_score,0)/ranking.length):0
+  return(<div>
+    <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:24}}>
+      <div><h1 style={{fontSize:20,fontWeight:800,color:'#f0f6ff',letterSpacing:'-0.5px',marginBottom:4}}>Panel de Control</h1><div style={{fontSize:12,color:'#4a5f80'}}>IA Infrastructure · {ranking.length||52} empresas · actualización cada 60s</div></div>
+      <button onClick={onRefresh} style={{display:'inline-flex',alignItems:'center',gap:6,padding:'8px 16px',borderRadius:8,fontSize:12,cursor:'pointer',background:'#0d1421',border:'1px solid #1a2840',color:'#8899bb'}}>↺ Actualizar ahora</button>
+    </div>
+    <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:28}}>
+      {[{l:'Empresas activas',v:'52',c:'#00d4ff'},{l:'Score promedio',v:avg||'—',c:'#00ff94'},{l:'Señales emergentes',v:emerging.length||4,c:'#7b61ff'},{l:'Fuentes verificadas',v:'8+',c:'#ffd60a'}].map((m,i)=>(<div key={i} style={{background:'#0d1421',border:'1px solid #1a2840',borderRadius:12,padding:16}}><div style={{fontSize:11,color:'#4a5f80',marginBottom:8,textTransform:'uppercase',letterSpacing:'0.5px'}}>{m.l}</div><div style={{fontSize:26,fontWeight:800,color:m.c,marginBottom:4}}>{m.v}</div></div>))}
+    </div>
+    {emerging.length>0&&<><div style={{fontSize:14,fontWeight:700,color:'#f0f6ff',marginBottom:12}}>⚡ Señales Emergentes</div><div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:12,marginBottom:24}}>{emerging.map(c=>(<div key={c.id} onClick={()=>onCo(c.name)} style={{background:'linear-gradient(135deg,#0d1f3d,#0a1a0d)',border:'1px solid #00d4ff22',borderRadius:12,padding:16,cursor:'pointer'}}><div style={{fontSize:10,color:'#00d4ff',textTransform:'uppercase',letterSpacing:'1px',marginBottom:6,fontWeight:600}}>⚡ Señal emergente</div><div style={{fontSize:15,fontWeight:700,color:'#f0f6ff',marginBottom:4}}>{c.name}</div><div style={{fontSize:11,color:'#4a5f80',marginBottom:12}}>{c.industry}</div><div style={{display:'flex',gap:20}}><div><div style={{fontSize:10,color:'#4a5f80'}}>Score</div><div style={{fontSize:20,fontWeight:800,color:'#00ff94'}}>{c.exposure_score}</div></div><div><div style={{fontSize:10,color:'#4a5f80'}}>Menciones</div><div style={{fontSize:20,fontWeight:800,color:'#f0f6ff'}}>{c.mention_count}×</div></div></div></div>))}</div></>}
+    <div style={{display:'grid',gridTemplateColumns:'1fr 360px',gap:16}}>
+      <div style={{background:'#0d1421',border:'1px solid #1a2840',borderRadius:12,padding:16}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:14}}><h2 style={{fontSize:14,fontWeight:700,color:'#f0f6ff'}}>Empresas del sector — Score de Exposición IA</h2><span style={{fontSize:11,color:'#4a5f80'}}>Clic para ver análisis completo</span></div>
+        {loading?(<div style={{display:'flex',alignItems:'center',gap:10,padding:'30px 0',justifyContent:'center',color:'#4a5f80'}}><span style={{animation:'spin 1s linear infinite',display:'inline-block',fontSize:18}}>↺</span>Consultando Tavily API...</div>):
+        top.map((c,i)=>(<div key={c.id} onClick={()=>onCo(c.name)} style={{display:'flex',alignItems:'center',gap:12,padding:'10px 12px',borderRadius:8,cursor:'pointer',borderBottom:'1px solid #111c2d'}} onMouseEnter={e=>e.currentTarget.style.background='#111c2d'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
+          <span style={{fontSize:11,fontWeight:800,color:'#2a3f60',width:22,textAlign:'right'}}>{i+1}</span>
+          <div style={{width:34,height:34,borderRadius:8,background:lc(c.name)+'18',border:`1px solid ${lc(c.name)}33`,color:lc(c.name),display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:800,flexShrink:0}}>{c.name.substring(0,2).toUpperCase()}</div>
+          <div style={{flex:1,minWidth:0}}><div style={{fontSize:13,fontWeight:600,color:'#f0f6ff',marginBottom:1}}>{c.name}</div><div style={{fontSize:11,color:'#4a5f80',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{c.industry} · {c.country}</div></div>
+          {c.trending&&<span style={{padding:'2px 8px',borderRadius:12,fontSize:10,fontWeight:600,background:'#00d4ff11',color:'#00d4ff',border:'1px solid #00d4ff33'}}>trending</span>}
+          <div style={{padding:'3px 10px',borderRadius:12,fontSize:12,fontWeight:800,background:sbg(c.exposure_score),color:sc(c.exposure_score),border:`1px solid ${sborder(c.exposure_score)}`,boxShadow:`0 0 8px ${sc(c.exposure_score)}22`}}>{c.exposure_score}</div>
+          <ScoreRing score={c.exposure_score} size={36}/>
+        </div>))}
       </div>
-      <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:24}}>
-        {[{l:'Empresas monitoreadas',v:'52',c:'#e6edf3',sub:'IA Infrastructure'},{l:'Score promedio',v:ranking.length?Math.round(ranking.reduce((a,c)=>a+c.exposure_score,0)/ranking.length):'—',c:'#10b981',sub:'↑ esta semana'},{l:'Señales emergentes',v:emerging.length||4,c:'#3b82f6',sub:'Activas ahora'},{l:'APIs conectadas',v:loading?'⏳':'✓',c:'#10b981',sub:'Tavily + Yahoo Finance'}].map((m,i)=>(
-          <div key={i} style={{background:'#1a2235',borderRadius:8,padding:14}}>
-            <div style={{fontSize:11,color:'#64748b',marginBottom:6}}>{m.l}</div>
-            <div style={{fontSize:22,fontWeight:700,color:m.c}}>{m.v}</div>
-            <div style={{fontSize:11,color:'#94a3b8',marginTop:4}}>{m.sub}</div>
-          </div>
-        ))}
-      </div>
-      {emerging.length>0&&<>
-        <div style={{fontSize:13,fontWeight:600,color:'#fff',marginBottom:12}}>⚡ Señales Emergentes</div>
-        <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:12,marginBottom:24}}>
-          {emerging.map(c=>(
-            <div key={c.id} onClick={()=>onCo(c.name)} style={{background:'linear-gradient(135deg,#0d1f3d,#0d2d1f)',border:'1px solid #1e4060',borderRadius:12,padding:14,cursor:'pointer'}}>
-              <div style={{fontSize:10,color:'#38bdf8',textTransform:'uppercase',letterSpacing:1,marginBottom:4}}>Señal emergente</div>
-              <div style={{fontSize:14,fontWeight:600,color:'#fff',marginBottom:4}}>{c.name}</div>
-              <div style={{fontSize:11,color:'#94a3b8',marginBottom:10}}>{c.industry} · {c.country}</div>
-              <div style={{display:'flex',gap:16}}>
-                <div><div style={{fontSize:10,color:'#64748b'}}>Score</div><div style={{fontSize:18,fontWeight:700,color:scoreColor(c.exposure_score)}}>{c.exposure_score}</div></div>
-                <div><div style={{fontSize:10,color:'#64748b'}}>Menciones</div><div style={{fontSize:18,fontWeight:700,color:'#fff'}}>{c.mention_count}x</div></div>
-              </div>
-            </div>
-          ))}
+      <div style={{display:'flex',flexDirection:'column',gap:12}}>
+        <div style={{background:'#0d1421',border:'1px solid #1a2840',borderRadius:12,padding:16}}>
+          <h2 style={{fontSize:14,fontWeight:700,color:'#f0f6ff',marginBottom:12}}>Estado del sistema</h2>
+          {[{l:'Tavily API',v:'Conectada',c:'#00ff94'},{l:'Yahoo Finance',v:'Activa',c:'#00ff94'},{l:'Noticias en tiempo real',v:'OK',c:'#00ff94'},{l:'Sentiment redes',v:'En desarrollo',c:'#ffd60a'}].map((s,i)=>(<div key={i} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'7px 0',borderBottom:'1px solid #111c2d'}}><span style={{fontSize:12,color:'#8899bb'}}>{s.l}</span><span style={{fontSize:11,fontWeight:600,color:s.c,display:'flex',alignItems:'center',gap:4}}><span style={{width:6,height:6,borderRadius:'50%',background:s.c,display:'inline-block'}}/>{s.v}</span></div>))}
         </div>
-      </>}
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
-        <div style={{background:'#111827',border:'1px solid #1e2d45',borderRadius:12,padding:16}}>
-          <div style={{fontSize:13,fontWeight:600,color:'#fff',marginBottom:12}}>Ranking por Score de Exposición</div>
-          {loading?<div style={{color:'#64748b',padding:'20px 0',textAlign:'center'}}>Cargando datos reales de Tavily...</div>:
-            top.map((c,i)=>(
-              <div key={c.id} style={{display:'flex',alignItems:'center',gap:12,padding:'10px 12px',borderRadius:8,cursor:'pointer',borderBottom:'1px solid #1e2d45'}} onClick={()=>onCo(c.name)}>
-                <span style={{fontSize:12,fontWeight:700,color:'#64748b',width:20,textAlign:'right'}}>{i+1}</span>
-                <div style={{width:32,height:32,borderRadius:6,background:lc(c.name)+'22',color:lc(c.name),display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:700,flexShrink:0}}>{c.name.substring(0,2).toUpperCase()}</div>
-                <div style={{flex:1}}><div style={{fontSize:13,fontWeight:500,color:'#e6edf3'}}>{c.name}</div><div style={{fontSize:11,color:'#64748b'}}>{c.industry}</div></div>
-                {c.trending&&<span style={{padding:'2px 8px',borderRadius:12,fontSize:10,fontWeight:500,background:'#0d1f2d',color:'#38bdf8',border:'1px solid #0c4a6e'}}>trending</span>}
-                <span style={{padding:'3px 8px',borderRadius:12,fontSize:11,fontWeight:600,background:scoreBg(c.exposure_score),color:scoreColor(c.exposure_score),border:`1px solid ${scoreBorder(c.exposure_score)}`}}>{c.exposure_score}</span>
-              </div>
-            ))
-          }
-        </div>
-        <div style={{background:'#111827',border:'1px solid #1e2d45',borderRadius:12,padding:16}}>
-          <div style={{fontSize:13,fontWeight:600,color:'#fff',marginBottom:12}}>Estado del Sistema</div>
-          {[{t:'Tavily API activa',d:'Noticias verificadas en tiempo real — Reuters, Bloomberg, SEC',type:'success'},{t:'Yahoo Finance conectada',d:'Precios con delay 15 min para NYSE/NASDAQ',type:'success'},{t:'USPTO Patents',d:'Monitoreo de patentes activo',type:'info'},{t:'Reddit / StockTwits',d:'Integración en desarrollo — próximamente',type:'warn'}].map((a,i)=>(
-            <div key={i} style={{padding:'10px 12px',borderRadius:8,marginBottom:6,borderLeft:`3px solid ${a.type==='success'?'#10b981':a.type==='warn'?'#f59e0b':'#3b82f6'}`,background:'#1a2235'}}>
-              <div style={{fontSize:12,fontWeight:500,color:'#e6edf3'}}>{a.t}</div>
-              <div style={{fontSize:11,color:'#64748b',marginTop:2}}>{a.d}</div>
-            </div>
-          ))}
-          <div style={{fontSize:13,fontWeight:600,color:'#fff',marginBottom:8,marginTop:16}}>Búsquedas frecuentes</div>
-          {['NVIDIA','Constellation Energy','Astera Labs','Vertiv Holdings','TSMC'].map(n=>(
-            <div key={n} style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'6px 0',borderBottom:'1px solid #1e2d45',cursor:'pointer'}} onClick={()=>onCo(n)}>
-              <span style={{fontSize:12,color:'#e6edf3'}}>{n}</span>
-              <span style={{fontSize:11,color:'#3b82f6'}}>→ Ver</span>
-            </div>
-          ))}
+        <div style={{background:'#0d1421',border:'1px solid #1a2840',borderRadius:12,padding:16}}>
+          <h2 style={{fontSize:14,fontWeight:700,color:'#f0f6ff',marginBottom:12}}>Acceso rápido</h2>
+          {['NVIDIA','Constellation Energy','Astera Labs','Vertiv Holdings','TSMC','Arista Networks'].map(n=>(<div key={n} onClick={()=>onCo(n)} style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'7px 0',borderBottom:'1px solid #111c2d',cursor:'pointer'}} onMouseEnter={e=>e.currentTarget.style.paddingLeft='6px'} onMouseLeave={e=>e.currentTarget.style.paddingLeft='0'}><div style={{display:'flex',alignItems:'center',gap:8}}><div style={{width:22,height:22,borderRadius:4,background:lc(n)+'22',color:lc(n),display:'flex',alignItems:'center',justifyContent:'center',fontSize:9,fontWeight:800}}>{n.substring(0,2).toUpperCase()}</div><span style={{fontSize:12,color:'#8899bb'}}>{n}</span></div><span style={{fontSize:11,color:'#00d4ff'}}>→</span></div>))}
         </div>
       </div>
     </div>
-  )
+  </div>)
 }
-
-function Search({results,query,onSearch,onCo}){
-  const [q,setQ]=useState(query||'')
-  const cos=results?.companies||[]
-  return(
-    <div>
-      <div style={{fontSize:15,fontWeight:600,color:'#fff',marginBottom:16}}>Buscar empresas</div>
-      <div style={{display:'flex',gap:8,marginBottom:16}}>
-        <input style={{flex:1,background:'#1a2235',border:'1px solid #1e2d45',borderRadius:8,padding:'10px 16px',color:'#e6edf3',fontSize:14,outline:'none'}} value={q} onChange={e=>setQ(e.target.value)} placeholder='Empresa, sector o tecnología...' onKeyDown={e=>e.key==='Enter'&&onSearch(q)}/>
-        <button style={{display:'inline-flex',alignItems:'center',gap:6,padding:'6px 16px',borderRadius:8,fontSize:13,fontWeight:500,cursor:'pointer',background:'#3b82f6',border:'none',color:'#fff'}} onClick={()=>onSearch(q)}>Buscar</button>
+function Buscar({results,query,onSearch,onCo,allCompanies}){
+  const[q,setQ]=useState(query||'');const[sugg,setSugg]=useState([]);const cos=results?.companies||[]
+  function handleQ(val){setQ(val);if(val.length>1){setSugg((allCompanies||[]).filter(c=>c.toLowerCase().includes(val.toLowerCase())).slice(0,6))}else{setSugg([])}}
+  return(<div>
+    <h1 style={{fontSize:20,fontWeight:800,color:'#f0f6ff',marginBottom:20}}>Buscar empresas</h1>
+    <div style={{position:'relative',marginBottom:16}}>
+      <div style={{display:'flex',gap:10}}>
+        <div style={{flex:1,position:'relative'}}><span style={{position:'absolute',left:14,top:'50%',transform:'translateY(-50%)',color:'#4a5f80',fontSize:16}}>⊹</span><input value={q} onChange={e=>handleQ(e.target.value)} onKeyDown={e=>e.key==='Enter'&&onSearch(q)} style={{width:'100%',background:'#0d1421',border:'1px solid #1a2840',borderRadius:10,padding:'12px 16px 12px 42px',color:'#f0f6ff',fontSize:14,outline:'none'}} placeholder='Empresa, sector o tecnología...' onFocus={e=>e.target.style.borderColor='#00d4ff'} onBlur={e=>{e.target.style.borderColor='#1a2840';setTimeout(()=>setSugg([]),200)}}/></div>
+        <button onClick={()=>onSearch(q)} style={{padding:'12px 24px',borderRadius:10,border:'none',cursor:'pointer',fontSize:13,fontWeight:700,background:'linear-gradient(90deg,#00d4ff,#7b61ff)',color:'#060b14'}}>Buscar</button>
       </div>
-      <div style={{display:'flex',gap:8,marginBottom:20,flexWrap:'wrap'}}>
-        {['chips','data centers','energía','networking','cooling','ciberseguridad'].map(t=>(
-          <span key={t} style={{padding:'4px 12px',borderRadius:12,background:'#1a2235',border:'1px solid #1e2d45',fontSize:12,color:'#94a3b8',cursor:'pointer'}} onClick={()=>{setQ(t);onSearch(t)}}>{t}</span>
-        ))}
-      </div>
-      {cos.length>0&&<>
-        <div style={{fontSize:12,color:'#64748b',marginBottom:12}}>{results.result_count} empresas para "{results.query}"</div>
-        <div style={{background:'#111827',border:'1px solid #1e2d45',borderRadius:12,padding:16}}>
-          {cos.map(c=>(
-            <div key={c.id} style={{display:'flex',alignItems:'center',gap:12,padding:'10px 12px',borderRadius:8,cursor:'pointer',borderBottom:'1px solid #1e2d45'}} onClick={()=>onCo(c.name)}>
-              <div style={{width:32,height:32,borderRadius:6,background:lc(c.name)+'22',color:lc(c.name),display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:700}}>{c.name.substring(0,2).toUpperCase()}</div>
-              <div style={{flex:1}}><div style={{fontSize:13,fontWeight:500,color:'#e6edf3'}}>{c.name}</div><div style={{fontSize:11,color:'#64748b'}}>{c.industry} · {c.country}</div></div>
-              <span style={{padding:'3px 8px',borderRadius:12,fontSize:11,fontWeight:600,background:scoreBg(c.exposure_score||0),color:scoreColor(c.exposure_score||0),border:`1px solid ${scoreBorder(c.exposure_score||0)}`}}>{c.exposure_score||0}</span>
-            </div>
-          ))}
-        </div>
-      </>}
+      {sugg.length>0&&<div style={{position:'absolute',top:'100%',left:0,right:80,background:'#0d1421',border:'1px solid #1a2840',borderRadius:8,marginTop:4,zIndex:100,overflow:'hidden'}}>{sugg.map(s=>(<div key={s} style={{padding:'10px 14px',cursor:'pointer',fontSize:13,color:'#8899bb',display:'flex',alignItems:'center',gap:8}} onMouseDown={()=>{onCo(s);setSugg([])}} onMouseEnter={e=>e.currentTarget.style.background='#111c2d'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}><div style={{width:24,height:24,borderRadius:4,background:lc(s)+'22',color:lc(s),display:'flex',alignItems:'center',justifyContent:'center',fontSize:9,fontWeight:800}}>{s.substring(0,2).toUpperCase()}</div>{s}</div>))}</div>}
     </div>
-  )
+    <div style={{display:'flex',gap:8,marginBottom:24,flexWrap:'wrap'}}>
+      {['chips','data centers','energía','networking','cooling','ciberseguridad','manufactura','servidores'].map(t=>(<span key={t} onClick={()=>{setQ(t);onSearch(t)}} style={{padding:'5px 14px',borderRadius:20,background:'#0d1421',border:'1px solid #1a2840',fontSize:12,color:'#8899bb',cursor:'pointer'}} onMouseEnter={e=>{e.target.style.borderColor='#00d4ff';e.target.style.color='#00d4ff'}} onMouseLeave={e=>{e.target.style.borderColor='#1a2840';e.target.style.color='#8899bb'}}>{t}</span>))}
+    </div>
+    {cos.length>0&&<><div style={{fontSize:12,color:'#4a5f80',marginBottom:14}}>{results.result_count} empresas encontradas para "{results.query}"</div><div style={{background:'#0d1421',border:'1px solid #1a2840',borderRadius:12,overflow:'hidden'}}>{cos.map((c,i)=>(<div key={c.id} onClick={()=>onCo(c.name)} style={{display:'flex',alignItems:'center',gap:14,padding:'12px 16px',cursor:'pointer',borderBottom:i<cos.length-1?'1px solid #111c2d':'none'}} onMouseEnter={e=>e.currentTarget.style.background='#111c2d'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}><div style={{width:36,height:36,borderRadius:8,background:lc(c.name)+'18',border:`1px solid ${lc(c.name)}33`,color:lc(c.name),display:'flex',alignItems:'center',justifyContent:'center',fontSize:12,fontWeight:800}}>{c.name.substring(0,2).toUpperCase()}</div><div style={{flex:1}}><div style={{fontSize:14,fontWeight:600,color:'#f0f6ff',marginBottom:2}}>{c.name}</div><div style={{fontSize:11,color:'#4a5f80'}}>{c.industry} · {c.country} · {c.type==='public'?'Empresa pública':'Empresa privada'}</div></div><div style={{display:'flex',gap:6,alignItems:'center'}}>{(c.categories||[]).slice(0,2).map(cat=>(<span key={cat} style={{padding:'2px 8px',borderRadius:12,fontSize:10,fontWeight:500,background:'#7b61ff18',color:'#7b61ff',border:'1px solid #7b61ff33'}}>{cat}</span>))}<div style={{padding:'4px 12px',borderRadius:12,fontSize:12,fontWeight:800,background:sbg(c.exposure_score||0),color:sc(c.exposure_score||0),border:`1px solid ${sborder(c.exposure_score||0)}`}}>{c.exposure_score||0}</div></div></div>))}</div></>}
+    {results&&cos.length===0&&<div style={{textAlign:'center',padding:'60px 0',color:'#4a5f80'}}><div style={{fontSize:32,marginBottom:12}}>⊹</div><div style={{fontSize:16,color:'#8899bb',marginBottom:8}}>Sin resultados para "{query}"</div><div style={{fontSize:13}}>Probá con: chips, data centers, energía, nvidia, servidores</div></div>}
+  </div>)
 }
-
 function DeepDive({company,news,stock,nl,sl,tab,setTab,onCo,onLoadNews}){
-  const tabs=['Mercado','Cadena de Valor','Novedades','Especulación','Riesgo','Correlaciones']
-  const chain={suppliers:['TSMC','SK Hynix','ASML','Lam Research'],clients:['Microsoft','Meta','Google','Amazon','Super Micro'],indirect:['Equinix','Vertiv Holdings','Arista Networks','Constellation Energy']}
-  const risks=[{l:'Concentración de clientes',r:'ALTO',d:'Top 5 = 47% ingresos'},{l:'Riesgo geopolítico China',r:'CRÍTICO',d:'Export restrictions activas'},{l:'Riesgo regulatorio',r:'MEDIO',d:'Antitrust scrutiny'},{l:'Deuda/Balance',r:'BAJO',d:'Net cash +$26B'},{l:'Dependencia TSMC',r:'ALTO',d:'90% fab en Taiwan'}]
-  const corrs=[{n:'SK Hynix',v:94,t:'Proveedor HBM',dir:'directa'},{n:'Super Micro',v:88,t:'Ensamblado',dir:'directa'},{n:'Astera Labs',v:82,t:'Conectividad IA',dir:'indirecta'},{n:'Vertiv Holdings',v:76,t:'Cooling',dir:'indirecta'},{n:'Constellation Energy',v:71,t:'Energía',dir:'indirecta'}]
-  return(
-    <div>
-      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:20}}>
-        <div style={{display:'flex',alignItems:'center',gap:12}}>
-          <div style={{width:40,height:40,borderRadius:8,background:lc(company)+'22',color:lc(company),display:'flex',alignItems:'center',justifyContent:'center',fontSize:14,fontWeight:700}}>{company.substring(0,2).toUpperCase()}</div>
-          <div><div style={{fontSize:18,fontWeight:700,color:'#fff'}}>{company}</div><div style={{fontSize:12,color:'#64748b'}}>IA Infrastructure · Deep Dive</div></div>
-        </div>
-        <div style={{display:'flex',gap:8}}>
-          <button style={{display:'inline-flex',alignItems:'center',gap:6,padding:'6px 12px',borderRadius:8,fontSize:12,cursor:'pointer',border:'1px solid #1e2d45',background:'#1a2235',color:'#94a3b8'}}>★ Watchlist</button>
-          <button style={{display:'inline-flex',alignItems:'center',gap:6,padding:'6px 12px',borderRadius:8,fontSize:12,cursor:'pointer',background:'#3b82f6',border:'none',color:'#fff'}}>Ver Grafo</button>
-        </div>
-      </div>
-      <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:10,marginBottom:20}}>
-        <div style={{background:'#1a2235',borderRadius:8,padding:14}}><div style={{fontSize:11,color:'#64748b',marginBottom:4}}>Precio acción</div><div style={{fontSize:16,fontWeight:700,color:'#e6edf3'}}>{sl?'...':(stock?.current_price?`$${stock.current_price}`:stock?.error?'N/D':'—')}</div>{stock?.change_pct&&<div style={{fontSize:11,color:stock.change_pct>=0?'#10b981':'#ef4444',marginTop:2}}>{stock.change_pct>=0?'↑':'↓'}{Math.abs(stock.change_pct)}%</div>}</div>
-        <div style={{background:'#1a2235',borderRadius:8,padding:14}}><div style={{fontSize:11,color:'#64748b',marginBottom:4}}>Ticker</div><div style={{fontSize:16,fontWeight:700,color:'#e6edf3'}}>{stock?.ticker||'—'}</div></div>
-        <div style={{background:'#1a2235',borderRadius:8,padding:14}}><div style={{fontSize:11,color:'#64748b',marginBottom:4}}>Bolsa</div><div style={{fontSize:16,fontWeight:700,color:'#e6edf3'}}>{stock?.exchange||'—'}</div></div>
-        <div style={{background:'#1a2235',borderRadius:8,padding:14}}><div style={{fontSize:11,color:'#64748b',marginBottom:4}}>Moneda</div><div style={{fontSize:16,fontWeight:700,color:'#e6edf3'}}>{stock?.currency||'USD'}</div></div>
-      </div>
-      <div style={{display:'flex',gap:2,borderBottom:'1px solid #1e2d45',marginBottom:20}}>
-        {tabs.map((t,i)=>(<div key={i} style={{padding:'8px 14px',cursor:'pointer',fontSize:12,color:tab===i?'#3b82f6':'#94a3b8',borderBottom:tab===i?'2px solid #3b82f6':'2px solid transparent',marginBottom:-1}} onClick={()=>setTab(i)}>{t}</div>))}
-      </div>
-      {tab===0&&(
-        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
-          <div style={{background:'#111827',border:'1px solid #1e2d45',borderRadius:12,padding:16}}>
-            <div style={{fontSize:13,fontWeight:600,color:'#fff',marginBottom:12}}>Precio — Último mes</div>
-            {sl?<div style={{color:'#64748b',textAlign:'center',padding:'40px 0'}}>Cargando Yahoo Finance...</div>:stock?.history?.length>0?<MiniChart data={stock.history}/>:<div style={{color:'#64748b',textAlign:'center',padding:'40px 0',fontSize:12}}>{stock?.error||'Datos no disponibles'}</div>}
-          </div>
-          <div style={{background:'#111827',border:'1px solid #1e2d45',borderRadius:12,padding:16}}>
-            <div style={{fontSize:13,fontWeight:600,color:'#fff',marginBottom:12}}>Sentiment por canal</div>
-            {[{c:'Reddit',v:72,color:'#f59e0b'},{c:'StockTwits',v:68,color:'#10b981'},{c:'LinkedIn',v:81,color:'#0a66c2'},{c:'X/Twitter',v:64,color:'#1d9bf0'}].map(ch=>(
-              <div key={ch.c} style={{marginBottom:10}}>
-                <div style={{display:'flex',justifyContent:'space-between',marginBottom:4}}><span style={{fontSize:11,color:'#64748b'}}>{ch.c}</span><span style={{fontSize:11,fontWeight:600,color:ch.color}}>{ch.v}/100</span></div>
-                <div style={{height:4,background:'#1e2d45',borderRadius:2}}><div style={{width:`${ch.v}%`,height:'100%',background:ch.color,borderRadius:2}}></div></div>
-              </div>
-            ))}
-            <div style={{fontSize:10,color:'#64748b',marginTop:8,fontStyle:'italic'}}>* Datos estimados — integración completa en desarrollo</div>
-          </div>
-        </div>
-      )}
-      {tab===1&&(
-        <div style={{background:'#111827',border:'1px solid #1e2d45',borderRadius:12,padding:16}}>
-          <div style={{fontSize:13,fontWeight:600,color:'#fff',marginBottom:16}}>Cadena de Valor — Directa e Inversa</div>
-          <div style={{display:'flex',gap:0,overflowX:'auto',paddingBottom:8}}>
-            <ChainCol title="Proveedores" items={chain.suppliers} color='#8b5cf6' dir="directa" onCo={onCo}/>
-            <div style={{display:'flex',alignItems:'center',color:'#64748b',fontSize:20,padding:'0 8px',paddingTop:24}}>→</div>
-            <div style={{minWidth:140,padding:'0 8px',borderLeft:'2px solid #3b82f6',borderRight:'2px solid #3b82f6',background:'#0d1f3d22'}}>
-              <div style={{fontSize:10,color:'#3b82f6',textTransform:'uppercase',letterSpacing:1,marginBottom:8}}>Centro</div>
-              <div style={{background:'#0d1f3d',border:'1px solid #3b82f6',borderRadius:8,padding:'8px 10px'}}><div style={{fontSize:13,fontWeight:600,color:'#3b82f6'}}>{company}</div></div>
-            </div>
-            <div style={{display:'flex',alignItems:'center',color:'#64748b',fontSize:20,padding:'0 8px',paddingTop:24}}>→</div>
-            <ChainCol title="Clientes directos" items={chain.clients} color='#10b981' dir="directa" onCo={onCo}/>
-            <div style={{display:'flex',alignItems:'center',color:'#64748b',fontSize:20,padding:'0 8px',paddingTop:24}}>→</div>
-            <ChainCol title="Indirectos" items={chain.indirect} color='#f59e0b' dir="indirecta" onCo={onCo}/>
-          </div>
-        </div>
-      )}
-      {tab===2&&(
-        <div>
-          <div style={{display:'flex',gap:8,marginBottom:16}}>
-            <button style={{display:'inline-flex',padding:'6px 12px',borderRadius:8,fontSize:12,cursor:'pointer',border:'1px solid #1e2d45',background:'#1a2235',color:'#94a3b8'}} onClick={()=>onLoadNews(company,'news')}>Noticias</button>
-            <button style={{display:'inline-flex',padding:'6px 12px',borderRadius:8,fontSize:12,cursor:'pointer',border:'1px solid #1e2d45',background:'#1a2235',color:'#94a3b8'}} onClick={()=>onLoadNews(company,'contracts')}>Contratos</button>
-          </div>
-          {nl?<div style={{color:'#64748b',textAlign:'center',padding:'40px 0'}}>Buscando en Tavily...</div>:
-           news.length>0?news.map((item,i)=>(
-            <div key={i} style={{paddingLeft:12,marginBottom:8,background:'#1a2235',borderRadius:'0 8px 8px 0',padding:'10px 12px',borderLeft:`3px solid ${item.impact==='high'?'#ef4444':item.impact==='medium'?'#f59e0b':'#3b82f6'}`}}>
-              <div style={{fontSize:10,color:'#64748b',marginBottom:4}}>{item.source}<span style={{display:'inline-block',padding:'1px 6px',borderRadius:4,fontSize:10,fontWeight:600,marginLeft:6,background:item.impact==='high'?'#2d0d0d':item.impact==='medium'?'#2d1f0d':'#0d1f2d',color:item.impact==='high'?'#f87171':item.impact==='medium'?'#fbbf24':'#60a5fa'}}>{(item.impact||'low').toUpperCase()}</span></div>
-              <div style={{fontSize:12,color:'#e6edf3',lineHeight:1.5,marginBottom:6}}><a href={item.url} target="_blank" rel="noopener" style={{color:'#e6edf3',textDecoration:'none'}}>{item.title}</a></div>
-              {item.snippet&&<div style={{fontSize:11,color:'#64748b',lineHeight:1.4}}>{item.snippet}...</div>}
-            </div>
-           )):(<div style={{color:'#64748b',textAlign:'center',padding:'40px 0',fontSize:12}}>No hay novedades recientes verificadas. Las noticias provienen de Reuters, Bloomberg, SEC.gov.</div>)
-          }
-        </div>
-      )}
-      {tab===3&&(
-        <div style={{background:'#1a1500',border:'1px solid #5c4d00',borderRadius:12,padding:16}}>
-          <div style={{fontSize:13,fontWeight:600,color:'#f59e0b',marginBottom:8}}>⚠ Zona especulativa</div>
-          <div style={{fontSize:11,color:'#64748b',marginBottom:16,fontStyle:'italic'}}>Basado en menciones en redes sociales. Solo se muestra con 100+ menciones verificadas.</div>
-          {[{c:'Reddit r/investing',v:72,pos:68,neg:18,color:'#f59e0b'},{c:'StockTwits',v:68,pos:62,neg:22,color:'#10b981'},{c:'LinkedIn',v:81,pos:75,neg:10,color:'#0a66c2'}].map(ch=>(
-            <div key={ch.c} style={{background:'#1a2235',borderRadius:8,padding:12,marginBottom:10}}>
-              <div style={{display:'flex',justifyContent:'space-between',marginBottom:8}}><span style={{fontSize:12,fontWeight:500,color:'#e6edf3'}}>{ch.c}</span><span style={{fontSize:11,color:ch.color,fontWeight:600}}>Score {ch.v}/100</span></div>
-              {[{l:'Positivo',v:ch.pos,c:'#10b981'},{l:'Negativo',v:ch.neg,c:'#ef4444'},{l:'Neutro',v:100-ch.pos-ch.neg,c:'#64748b'}].map(ss=>(
-                <div key={ss.l} style={{marginBottom:6}}>
-                  <div style={{display:'flex',justifyContent:'space-between',fontSize:10,color:'#64748b',marginBottom:2}}><span>{ss.l}</span><span>{ss.v}%</span></div>
-                  <div style={{height:4,background:'#1e2d45',borderRadius:2}}><div style={{width:`${ss.v}%`,height:'100%',background:ss.c,borderRadius:2}}></div></div>
-                </div>
-              ))}
-            </div>
-          ))}
-        </div>
-      )}
-      {tab===4&&(
-        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
-          <div style={{background:'#111827',border:'1px solid #1e2d45',borderRadius:12,padding:16}}>
-            <div style={{fontSize:13,fontWeight:600,color:'#fff',marginBottom:12}}>Matriz de Riesgo</div>
-            {risks.map((r,i)=>(
-              <div key={i} style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'8px 0',borderBottom:'1px solid #1e2d45'}}>
-                <div><div style={{fontSize:12,color:'#94a3b8'}}>{r.l}</div><div style={{fontSize:10,color:'#64748b',marginTop:2}}>{r.d}</div></div>
-                <span style={{padding:'2px 8px',borderRadius:12,fontSize:10,fontWeight:600,background:r.r==='CRÍTICO'?'#2d0d0d':r.r==='ALTO'?'#2d1a0d':r.r==='MEDIO'?'#2d2a0d':'#0d2d1f',color:r.r==='CRÍTICO'?'#f87171':r.r==='ALTO'?'#fb923c':r.r==='MEDIO'?'#fbbf24':'#34d399'}}>{r.r}</span>
-              </div>
-            ))}
-          </div>
-          <div style={{background:'#111827',border:'1px solid #1e2d45',borderRadius:12,padding:16}}>
-            <div style={{fontSize:13,fontWeight:600,color:'#fff',marginBottom:12}}>Concentración de Riesgo</div>
-            {[{l:'TSMC (fab)',v:90,alert:true},{l:'Top 5 clientes',v:47,alert:true},{l:'Taiwan supply chain',v:68,alert:true},{l:'CUDA ecosystem',v:85,alert:false}].map((item,i)=>(
-              <div key={i} style={{marginBottom:12}}>
-                <div style={{display:'flex',justifyContent:'space-between',marginBottom:4}}><span style={{fontSize:11,color:'#94a3b8'}}>{item.l}</span><span style={{fontSize:11,fontWeight:600,color:item.alert&&item.v>50?'#ef4444':'#e6edf3'}}>{item.v}%{item.alert&&item.v>50?' ⚠':''}</span></div>
-                <div style={{height:6,background:'#1e2d45',borderRadius:3}}><div style={{width:`${item.v}%`,height:'100%',background:item.v>70?'#ef4444':item.v>40?'#f59e0b':'#10b981',borderRadius:3}}></div></div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-      {tab===5&&(
-        <div style={{background:'#111827',border:'1px solid #1e2d45',borderRadius:12,padding:16}}>
-          <div style={{fontSize:13,fontWeight:600,color:'#fff',marginBottom:16}}>Correlaciones con {company}</div>
-          {corrs.map((c,i)=>(
-            <div key={i} style={{display:'flex',alignItems:'center',gap:10,padding:'8px 0',borderBottom:'1px solid #1e2d45',cursor:'pointer'}} onClick={()=>onCo(c.n)}>
-              <div style={{width:130,fontSize:12,color:'#e6edf3'}}>{c.n}</div>
-              <span style={{padding:'2px 8px',borderRadius:12,fontSize:10,fontWeight:500,background:c.dir==='directa'?'#0d1f2d':'#1a0d2d',color:c.dir==='directa'?'#60a5fa':'#c084fc',width:70,textAlign:'center',display:'inline-block'}}>{c.dir}</span>
-              <div style={{flex:1,height:4,background:'#1e2d45',borderRadius:2}}><div style={{width:`${c.v}%`,height:'100%',background:c.v>80?'#10b981':'#3b82f6',borderRadius:2}}></div></div>
-              <div style={{fontSize:11,fontWeight:600,color:'#3b82f6',width:36,textAlign:'right'}}>{c.v}%</div>
-              <div style={{fontSize:10,color:'#64748b',width:120}}>{c.t}</div>
-            </div>
-          ))}
-        </div>
-      )}
+  const tabs=['Mercado','Cadena de Valor','Noticias','Especulación','Riesgo','Correlaciones']
+  const chain={suppliers:['TSMC','SK Hynix','ASML','Lam Research','Applied Materials'],clients:['Microsoft','Meta','Google','Amazon','Super Micro Computer'],indirect:['Equinix','Vertiv Holdings','Arista Networks','Constellation Energy','Corning']}
+  const risks=[{l:'Concentración de clientes',r:'ALTO',d:'Top 5 = 47% ingresos'},{l:'Riesgo geopolítico China',r:'CRÍTICO',d:'Restricciones de exportación'},{l:'Riesgo regulatorio',r:'MEDIO',d:'Investigaciones antimonopolio'},{l:'Solidez financiera',r:'BAJO',d:'Efectivo neto +$26B'},{l:'Dependencia de TSMC',r:'ALTO',d:'90% fab en Taiwan'}]
+  const corrs=[{n:'SK Hynix',v:94,t:'Proveedor HBM',dir:'directa'},{n:'Super Micro',v:88,t:'Ensamblado',dir:'directa'},{n:'Astera Labs',v:82,t:'Conectividad IA',dir:'indirecta'},{n:'Vertiv Holdings',v:76,t:'Cooling',dir:'indirecta'},{n:'Constellation Energy',v:71,t:'Energía nuclear',dir:'indirecta'}]
+  return(<div>
+    <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:20}}>
+      <div style={{display:'flex',alignItems:'center',gap:14}}><div style={{width:48,height:48,borderRadius:10,background:lc(company)+'18',border:`1px solid ${lc(company)}44`,color:lc(company),display:'flex',alignItems:'center',justifyContent:'center',fontSize:16,fontWeight:800}}>{company.substring(0,2).toUpperCase()}</div><div><h1 style={{fontSize:20,fontWeight:800,color:'#f0f6ff',marginBottom:3}}>{company}</h1><div style={{fontSize:12,color:'#4a5f80'}}>IA Infrastructure · Análisis profundo</div></div></div>
+      <div style={{display:'flex',gap:8}}><button style={{padding:'7px 14px',borderRadius:8,border:'1px solid #1a2840',background:'#0d1421',color:'#8899bb',cursor:'pointer',fontSize:12}}>★ Watchlist</button><button style={{padding:'7px 14px',borderRadius:8,border:'1px solid #00d4ff44',background:'#00d4ff11',color:'#00d4ff',cursor:'pointer',fontSize:12,fontWeight:600}}>Ver Grafo →</button></div>
     </div>
-  )
-}
-
-function MiniChart({data}){
-  const ref=useRef()
-  useEffect(()=>{
-    if(!ref.current||!data?.length)return
-    const ctx=ref.current.getContext('2d')
-    const prices=data.map(d=>d.close).filter(Boolean)
-    if(!prices.length)return
-    const W=ref.current.width,H=ref.current.height
-    const min=Math.min(...prices),max=Math.max(...prices),range=max-min||1
-    ctx.clearRect(0,0,W,H)
-    ctx.strokeStyle='#3b82f6';ctx.lineWidth=2;ctx.beginPath()
-    prices.forEach((p,i)=>{const x=(i/(prices.length-1))*W,y=H-((p-min)/range)*(H-20)-10;i===0?ctx.moveTo(x,y):ctx.lineTo(x,y)})
-    ctx.stroke()
-    ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.closePath();ctx.fillStyle='#3b82f611';ctx.fill()
-    ctx.fillStyle='#64748b';ctx.font='10px sans-serif'
-    ctx.fillText(`$${prices[0]?.toFixed(0)}`,4,H-4)
-    ctx.fillText(`$${prices[prices.length-1]?.toFixed(0)}`,W-40,H-4)
-  },[data])
-  return <canvas ref={ref} width={400} height={160} style={{width:'100%',height:160}}/>
-}
-
-function ChainCol({title,items,color,dir,onCo}){
-  return(
-    <div style={{minWidth:140,padding:'0 8px'}}>
-      <div style={{fontSize:10,color:'#64748b',textTransform:'uppercase',letterSpacing:1,marginBottom:8}}>{title}</div>
-      {items.map(n=>(
-        <div key={n} style={{background:'#1a2235',border:'1px solid #1e2d45',borderRadius:8,padding:'8px 10px',marginBottom:6,cursor:'pointer'}} onClick={()=>onCo(n)}>
-          <div style={{fontSize:12,fontWeight:500,color:'#e6edf3'}}>{n}</div>
-          <div style={{fontSize:10,color,marginTop:2}}>{dir}</div>
-        </div>
-      ))}
+    <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:10,marginBottom:20}}>
+      {[{l:'Precio de la acción',v:sl?'...':(stock?.current_price?`$${stock.current_price}`:stock?.error?'N/D':'—'),sub:stock?.change_pct?`${stock.change_pct>=0?'▲':'▼'} ${Math.abs(stock.change_pct)}% hoy`:'Yahoo Finance · delay 15min',c:stock?.change_pct>=0?'#00ff94':'#ff4444'},{l:'Símbolo bursátil',v:stock?.ticker||'—',sub:stock?.exchange||'Bolsa',c:'#00d4ff'},{l:'Moneda',v:stock?.currency||'USD',sub:'Divisa',c:'#7b61ff'},{l:'Datos',v:'Yahoo Finance',sub:'Actualización 60s',c:'#ffd60a'}].map((m,i)=>(<div key={i} style={{background:'#0d1421',border:'1px solid #1a2840',borderRadius:10,padding:14}}><div style={{fontSize:10,color:'#4a5f80',marginBottom:6,textTransform:'uppercase',letterSpacing:'0.5px'}}>{m.l}</div><div style={{fontSize:15,fontWeight:700,color:m.c,marginBottom:3}}>{m.v}</div><div style={{fontSize:10,color:'#4a5f80'}}>{m.sub}</div></div>))}
     </div>
-  )
-}
-
-function Graph({company,onCo}){
-  const ref=useRef()
-  useEffect(()=>{
-    if(!ref.current)return
-    const svg=ref.current,W=svg.clientWidth||700,H=420
-    svg.setAttribute('viewBox',`0 0 ${W} ${H}`)
-    svg.innerHTML=''
-    const nodes=[{id:company,score:90,type:'center',x:W/2,y:H/2},{id:'TSMC',score:89,type:'supplier',x:W/2-200,y:H/2-80},{id:'SK Hynix',score:85,type:'supplier',x:W/2-180,y:H/2+80},{id:'ASML',score:87,type:'supplier',x:W/2-240,y:H/2},{id:'Microsoft',score:95,type:'client',x:W/2+180,y:H/2-100},{id:'Meta',score:90,type:'client',x:W/2+200,y:H/2},{id:'Google',score:93,type:'client',x:W/2+170,y:H/2+100},{id:'Equinix',score:72,type:'indirect',x:W/2+80,y:H/2-180},{id:'Vertiv',score:82,type:'indirect',x:W/2-60,y:H/2-200},{id:'Arista',score:78,type:'indirect',x:W/2+120,y:H/2+180},{id:'Constellation',score:76,type:'indirect',x:W/2-80,y:H/2+200}]
-    const links=[{s:'TSMC',t:company,type:'direct'},{s:'SK Hynix',t:company,type:'direct'},{s:'ASML',t:'TSMC',type:'direct'},{s:company,t:'Microsoft',type:'direct'},{s:company,t:'Meta',type:'direct'},{s:company,t:'Google',type:'direct'},{s:'Microsoft',t:'Equinix',type:'indirect'},{s:'Meta',t:'Vertiv',type:'indirect'},{s:'Google',t:'Arista',type:'indirect'},{s:'Microsoft',t:'Constellation',type:'indirect'}]
-    const ns=nodes.reduce((a,n)=>{a[n.id]=n;return a},{})
-    const colors={center:'#3b82f6',supplier:'#8b5cf6',client:'#10b981',indirect:'#f59e0b'}
-    const sizes={center:28,supplier:16,client:18,indirect:14}
-    links.forEach(l=>{const ss=ns[l.s],tt=ns[l.t];if(!ss||!tt)return;const line=document.createElementNS('http://www.w3.org/2000/svg','line');line.setAttribute('x1',ss.x);line.setAttribute('y1',ss.y);line.setAttribute('x2',tt.x);line.setAttribute('y2',tt.y);line.setAttribute('stroke',l.type==='direct'?'#3b82f6':'#8b5cf6');line.setAttribute('stroke-width',l.type==='direct'?'2':'1');line.setAttribute('stroke-dasharray',l.type==='indirect'?'5,3':'none');line.setAttribute('opacity','0.6');svg.appendChild(line)})
-    nodes.forEach(n=>{const g=document.createElementNS('http://www.w3.org/2000/svg','g');g.setAttribute('cursor','pointer');g.addEventListener('click',()=>onCo(n.id));const c=document.createElementNS('http://www.w3.org/2000/svg','circle');c.setAttribute('cx',n.x);c.setAttribute('cy',n.y);c.setAttribute('r',sizes[n.type]);c.setAttribute('fill',colors[n.type]+'33');c.setAttribute('stroke',n.score>=80?'#10b981':n.score>=60?'#f59e0b':'#ef4444');c.setAttribute('stroke-width',n.id===company?'3':'1.5');const t=document.createElementNS('http://www.w3.org/2000/svg','text');t.setAttribute('x',n.x);t.setAttribute('y',n.y+sizes[n.type]+14);t.setAttribute('text-anchor','middle');t.setAttribute('fill','#e6edf3');t.setAttribute('font-size',n.id===company?'12':'10');t.setAttribute('font-family','sans-serif');t.textContent=n.id;const sc=document.createElementNS('http://www.w3.org/2000/svg','text');sc.setAttribute('x',n.x);sc.setAttribute('y',n.y+4);sc.setAttribute('text-anchor','middle');sc.setAttribute('fill',n.score>=80?'#10b981':n.score>=60?'#f59e0b':'#ef4444');sc.setAttribute('font-size','11');sc.setAttribute('font-weight','700');sc.setAttribute('font-family','sans-serif');sc.textContent=n.score;g.appendChild(c);g.appendChild(t);g.appendChild(sc);svg.appendChild(g)})
-  },[company])
-  return(
-    <div>
-      <div style={{fontSize:15,fontWeight:600,color:'#fff',marginBottom:16}}>Grafo de Nodos — {company}</div>
-      <div style={{display:'flex',gap:12,marginBottom:12,flexWrap:'wrap'}}>
-        {[{l:'Directa',c:'#3b82f6'},{l:'Indirecta',c:'#8b5cf6'},{l:'Score alto',c:'#10b981',dot:true},{l:'Score medio',c:'#f59e0b',dot:true},{l:'Riesgo',c:'#ef4444',dot:true}].map((i,idx)=>(
-          <span key={idx} style={{display:'flex',alignItems:'center',gap:6,fontSize:11,color:'#64748b'}}>
-            {i.dot?<span style={{width:10,height:10,borderRadius:'50%',background:i.c,display:'inline-block'}}/>:<span style={{width:20,height:2,background:i.c,display:'inline-block'}}/>}{i.l}
-          </span>
-        ))}
+    <div style={{display:'flex',gap:0,borderBottom:'1px solid #1a2840',marginBottom:20,overflowX:'auto'}}>
+      {tabs.map((t,i)=>(<div key={i} onClick={()=>setTab(i)} style={{padding:'10px 16px',cursor:'pointer',fontSize:12,fontWeight:tab===i?700:400,color:tab===i?'#00d4ff':'#8899bb',borderBottom:tab===i?'2px solid #00d4ff':'2px solid transparent',marginBottom:-1,whiteSpace:'nowrap'}}>{t}</div>))}
+    </div>
+    {tab===0&&(<div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+      <div style={{background:'#0d1421',border:'1px solid #1a2840',borderRadius:12,padding:16}}><div style={{fontSize:13,fontWeight:700,color:'#f0f6ff',marginBottom:12}}>Precio — Último mes</div>{sl?<div style={{color:'#4a5f80',textAlign:'center',padding:'40px 0',display:'flex',flexDirection:'column',alignItems:'center',gap:8}}><span style={{animation:'spin 1s linear infinite',fontSize:20}}>↺</span>Consultando Yahoo Finance...</div>:stock?.history?.length>0?<MiniChart data={stock.history}color={stock.change_pct>=0?'#00ff94':'#ff4444'}/>:<div style={{color:'#4a5f80',textAlign:'center',padding:'40px 0',fontSize:12}}>{stock?.error||'Datos no disponibles'}</div>}</div>
+      <div style={{background:'#0d1421',border:'1px solid #1a2840',borderRadius:12,padding:16}}><div style={{fontSize:13,fontWeight:700,color:'#f0f6ff',marginBottom:12}}>Sentiment por canal</div>{[{c:'Reddit',v:72,color:'#ff6b35'},{c:'StockTwits',v:68,color:'#00ff94'},{c:'LinkedIn',v:81,color:'#0a66c2'},{c:'X/Twitter',v:64,color:'#1d9bf0'}].map(ch=>(<div key={ch.c} style={{marginBottom:12}}><div style={{display:'flex',justifyContent:'space-between',marginBottom:5}}><span style={{fontSize:11,color:'#8899bb'}}>{ch.c}</span><span style={{fontSize:12,fontWeight:700,color:ch.color}}>{ch.v}/100</span></div><div style={{height:5,background:'#111c2d',borderRadius:3,overflow:'hidden'}}><div style={{width:`${ch.v}%`,height:'100%',background:`linear-gradient(90deg,${ch.color}88,${ch.color})`,borderRadius:3}}/></div></div>))}<div style={{fontSize:10,color:'#2a3f60',marginTop:8,fontStyle:'italic'}}>* Integración completa con APIs de redes en desarrollo</div></div>
+    </div>)}
+    {tab===1&&(<div style={{background:'#0d1421',border:'1px solid #1a2840',borderRadius:12,padding:16}}>
+      <div style={{fontSize:13,fontWeight:700,color:'#f0f6ff',marginBottom:16}}>Cadena de Valor — Directa e Inversa</div>
+      <div style={{display:'flex',gap:0,overflowX:'auto',paddingBottom:8}}>
+        <ChainCol title="Proveedores (upstream)" items={chain.suppliers} color='#7b61ff' dir="directa" onCo={onCo}/>
+        <div style={{display:'flex',alignItems:'center',padding:'0 12px',paddingTop:24,color:'#1a2840',fontSize:24}}>→</div>
+        <div style={{minWidth:150,padding:'0 8px',borderLeft:'2px solid #00d4ff',borderRight:'2px solid #00d4ff',background:'#00d4ff06'}}><div style={{fontSize:10,color:'#00d4ff',textTransform:'uppercase',letterSpacing:1,marginBottom:8,fontWeight:600}}>Centro</div><div style={{background:'#00d4ff11',border:'1px solid #00d4ff44',borderRadius:8,padding:'10px 12px'}}><div style={{fontSize:14,fontWeight:700,color:'#00d4ff'}}>{company}</div></div></div>
+        <div style={{display:'flex',alignItems:'center',padding:'0 12px',paddingTop:24,color:'#1a2840',fontSize:24}}>→</div>
+        <ChainCol title="Clientes directos" items={chain.clients} color='#00ff94' dir="directa" onCo={onCo}/>
+        <div style={{display:'flex',alignItems:'center',padding:'0 12px',paddingTop:24,color:'#1a2840',fontSize:24}}>→</div>
+        <ChainCol title="Beneficiarios indirectos" items={chain.indirect} color='#ffd60a' dir="indirecta" onCo={onCo}/>
       </div>
-      <svg ref={ref} style={{width:'100%',height:420,background:'#1a2235',borderRadius:12}} role="img" aria-label={`Grafo ${company}`}></svg>
-    </div>
-  )
-}
-
-function Compare({onCo}){
-  const cos=['NVIDIA','AMD','Broadcom']
-  const data={NVIDIA:{score:93,price:'$875',sentiment:'78/100',risk:'Medio-Alto',country:'USA'},AMD:{score:77,price:'$178',sentiment:'65/100',risk:'Medio',country:'USA'},Broadcom:{score:83,price:'$1,432',sentiment:'71/100',risk:'Medio',country:'USA'}}
-  return(
-    <div>
-      <div style={{fontSize:15,fontWeight:600,color:'#fff',marginBottom:20}}>Comparativa de Empresas</div>
-      <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:12}}>
-        {cos.map((c,i)=>(
-          <div key={c} style={{background:'#1a2235',border:`1px solid ${i===0?'#3b82f6':'#1e2d45'}`,borderRadius:12,padding:14,cursor:'pointer'}} onClick={()=>onCo(c)}>
-            {i===0&&<div style={{padding:'2px 8px',borderRadius:12,fontSize:10,fontWeight:500,background:'#0d1f2d',color:'#38bdf8',border:'1px solid #0c4a6e',display:'inline-block',marginBottom:8}}>Mayor score</div>}
-            <div style={{fontSize:14,fontWeight:600,color:'#fff',marginBottom:14,textAlign:'center'}}>{c}</div>
-            {['score','price','sentiment','risk','country'].map(m=>(
-              <div key={m} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'6px 0',borderBottom:'1px solid #1e2d45',fontSize:12}}>
-                <span style={{color:'#64748b',textTransform:'capitalize'}}>{m}</span>
-                <span style={{fontWeight:500,color:m==='score'&&i===0?'#10b981':'#e6edf3'}}>{data[c]?.[m]}</span>
-              </div>
-            ))}
-          </div>
-        ))}
+    </div>)}
+    {tab===2&&(<div>
+      <div style={{display:'flex',gap:8,marginBottom:16,alignItems:'center'}}>
+        {['news','contracts'].map(t=>(<button key={t} onClick={()=>onLoadNews(company,t)} style={{padding:'7px 14px',borderRadius:8,border:'1px solid #1a2840',background:'#0d1421',color:'#8899bb',cursor:'pointer',fontSize:12}}>{t==='news'?'📰 Noticias':'📋 Contratos'}</button>))}
+        <div style={{marginLeft:'auto',display:'flex',alignItems:'center',gap:6,fontSize:11,color:'#4a5f80'}}><LiveDot/>Fuente: Tavily API</div>
       </div>
-    </div>
-  )
+      {nl?(<div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:12,padding:'50px 0',color:'#4a5f80'}}><span style={{animation:'spin 1s linear infinite',fontSize:24}}>↺</span><span>Buscando en Reuters, Bloomberg, SEC...</span></div>):
+      news.length>0?news.map((item,i)=>(<div key={i} style={{padding:'12px 16px',marginBottom:8,background:'#0d1421',border:'1px solid #1a2840',borderRadius:10,borderLeft:`3px solid ${item.impact==='high'?'#ff4444':item.impact==='medium'?'#ffd60a':'#00d4ff'}`}}>
+        <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:6}}><span style={{fontSize:10,color:'#4a5f80'}}>{item.source}</span><span style={{padding:'1px 8px',borderRadius:12,fontSize:10,fontWeight:700,background:item.impact==='high'?'#1f0000':item.impact==='medium'?'#1f1500':'#001520',color:item.impact==='high'?'#ff4444':item.impact==='medium'?'#ffd60a':'#00d4ff'}}>{item.impact==='high'?'ALTO':item.impact==='medium'?'MEDIO':'BAJO'}</span>{item.published_date&&<span style={{fontSize:10,color:'#4a5f80',marginLeft:'auto'}}>{item.published_date}</span>}</div>
+        <a href={item.url} target="_blank" rel="noopener" style={{fontSize:13,color:'#f0f6ff',lineHeight:1.5,display:'block',marginBottom:6,textDecoration:'none'}}>{item.title}</a>
+        {item.snippet&&<div style={{fontSize:11,color:'#4a5f80',lineHeight:1.5}}>{item.snippet}...</div>}
+      </div>)):(<div style={{textAlign:'center',padding:'50px 0',color:'#4a5f80'}}><div style={{fontSize:24,marginBottom:12}}>≡</div>No hay noticias recientes verificadas</div>)}
+    </div>)}
+    {tab===3&&(<div style={{background:'#120f00',border:'1px solid #ffd60a33',borderRadius:12,padding:16}}>
+      <div style={{fontSize:14,fontWeight:700,color:'#ffd60a',marginBottom:8}}>⚠ Zona Especulativa</div>
+      <div style={{fontSize:12,color:'#4a5f80',lineHeight:1.5,marginBottom:16}}>Opiniones de redes sociales. No es información verificada. Solo se muestra con 100+ menciones.</div>
+      {[{c:'Reddit r/investing',v:72,pos:68,neg:18,color:'#ff6b35'},{c:'StockTwits',v:68,pos:62,neg:22,color:'#00ff94'},{c:'LinkedIn',v:81,pos:75,neg:10,color:'#0a66c2'}].map(ch=>(<div key={ch.c} style={{background:'#0d1421',border:'1px solid #1a2840',borderRadius:10,padding:14,marginBottom:10}}><div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}><span style={{fontSize:13,fontWeight:600,color:'#f0f6ff'}}>{ch.c}</span><span style={{fontSize:12,fontWeight:700,color:ch.color}}>Score {ch.v}/100</span></div>{[{l:'Positivo',v:ch.pos,c:'#00ff94'},{l:'Negativo',v:ch.neg,c:'#ff4444'},{l:'Neutro',v:100-ch.pos-ch.neg,c:'#4a5f80'}].map(ss=>(<div key={ss.l} style={{marginBottom:8}}><div style={{display:'flex',justifyContent:'space-between',fontSize:11,marginBottom:3}}><span style={{color:'#8899bb'}}>{ss.l}</span><span style={{color:ss.c,fontWeight:600}}>{ss.v}%</span></div><div style={{height:5,background:'#111c2d',borderRadius:3}}><div style={{width:`${ss.v}%`,height:'100%',background:ss.c,borderRadius:3}}/></div></div>))}</div>))}
+    </div>)}
+    {tab===4&&(<div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+      <div style={{background:'#0d1421',border:'1px solid #1a2840',borderRadius:12,padding:16}}><div style={{fontSize:13,fontWeight:700,color:'#f0f6ff',marginBottom:14}}>Matriz de Riesgo</div>{risks.map((r,i)=>(<div key={i} style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'10px 0',borderBottom:'1px solid #111c2d'}}><div><div style={{fontSize:12,color:'#8899bb',marginBottom:2}}>{r.l}</div><div style={{fontSize:10,color:'#4a5f80'}}>{r.d}</div></div><span style={{padding:'3px 10px',borderRadius:12,fontSize:11,fontWeight:700,background:r.r==='CRÍTICO'?'#1f0000':r.r==='ALTO'?'#1f0a00':r.r==='MEDIO'?'#1f1a00':'#001508',color:r.r==='CRÍTICO'?'#ff4444':r.r==='ALTO'?'#ff6b35':r.r==='MEDIO'?'#ffd60a':'#00ff94'}}>{r.r}</span></div>))}</div>
+      <div style={{background:'#0d1421',border:'1px solid #1a2840',borderRadius:12,padding:16}}><div style={{fontSize:13,fontWeight:700,color:'#f0f6ff',marginBottom:14}}>Concentración de riesgo</div>{[{l:'Dependencia de TSMC',v:90,alert:true},{l:'Top 5 clientes (% ingresos)',v:47,alert:true},{l:'Cadena Taiwan',v:68,alert:true},{l:'Ecosistema CUDA',v:85,alert:false}].map((item,i)=>(<div key={i} style={{marginBottom:14}}><div style={{display:'flex',justifyContent:'space-between',marginBottom:5}}><span style={{fontSize:12,color:'#8899bb'}}>{item.l}</span><span style={{fontSize:12,fontWeight:700,color:item.alert&&item.v>50?'#ff4444':'#f0f6ff'}}>{item.v}%{item.alert&&item.v>50?' ⚠':''}</span></div><div style={{height:6,background:'#111c2d',borderRadius:3,overflow:'hidden'}}><div style={{width:`${item.v}%`,height:'100%',background:`linear-gradient(90deg,${item.v>70?'#ff444488':'#ffd60a88'},${item.v>70?'#ff4444':'#ffd60a'})`,borderRadius:3}}/></div></div>))}</div>
+    </div>)}
+    {tab===5&&(<div style={{background:'#0d1421',border:'1px solid #1a2840',borderRadius:12,padding:16}}><div style={{fontSize:13,fontWeight:700,color:'#f0f6ff',marginBottom:16}}>Correlaciones con {company}</div>{corrs.map((c,i)=>(<div key={i} onClick={()=>onCo(c.n)} style={{display:'flex',alignItems:'center',gap:12,padding:'10px 0',borderBottom:'1px solid #111c2d',cursor:'pointer'}}><div style={{width:110,fontSize:12,color:'#f0f6ff',fontWeight:500}}>{c.n}</div><span style={{padding:'2px 10px',borderRadius:12,fontSize:10,fontWeight:600,background:c.dir==='directa'?'#00d4ff11':'#7b61ff11',color:c.dir==='directa'?'#00d4ff':'#7b61ff',width:72,textAlign:'center'}}>{c.dir}</span><div style={{flex:1,height:5,background:'#111c2d',borderRadius:3}}><div style={{width:`${c.v}%`,height:'100%',background:'linear-gradient(90deg,#00d4ff,#00ff94)',borderRadius:3}}/></div><div style={{fontSize:13,fontWeight:700,color:'#00ff94',width:38,textAlign:'right'}}>{c.v}%</div><div style={{fontSize:11,color:'#4a5f80',width:130}}>{c.t}</div></div>))}</div>)}
+  </div>)
 }
-
-function MapView(){
-  return(
-    <div>
-      <div style={{fontSize:15,fontWeight:600,color:'#fff',marginBottom:16}}>Mapa Geográfico — Concentración de Cadena IA</div>
-      <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:12,marginBottom:16}}>
-        {[{l:'Concentración Taiwan',v:'68%',c:'#ef4444',sub:'Riesgo geopolítico crítico'},{l:'Dependencia USA',v:'82%',c:'#e6edf3',sub:'Diseño y clientes'},{l:'Zonas de riesgo',v:'14',c:'#f59e0b',sub:'Taiwan, Corea, China'}].map((m,i)=>(
-          <div key={i} style={{background:'#1a2235',borderRadius:8,padding:14}}><div style={{fontSize:11,color:'#64748b',marginBottom:4}}>{m.l}</div><div style={{fontSize:20,fontWeight:700,color:m.c}}>{m.v}</div><div style={{fontSize:11,color:'#94a3b8',marginTop:4}}>{m.sub}</div></div>
-        ))}
-      </div>
-      <div style={{background:'#111827',border:'1px solid #1e2d45',borderRadius:12,padding:16,height:320,position:'relative',overflow:'hidden'}}>
-        <svg width="100%" height="300" viewBox="0 0 800 300">
-          <rect width="800" height="300" fill="#1a2235"/>
-          <path d="M 60 60 Q 120 40 180 60 Q 200 100 180 140 Q 140 160 100 140 Q 60 120 60 60Z" fill="#1f2a40" stroke="#1e2d45" strokeWidth="1"/>
-          <path d="M 200 40 Q 300 20 380 60 Q 420 80 400 140 Q 360 180 300 170 Q 240 160 200 120 Q 180 90 200 40Z" fill="#1f2a40" stroke="#1e2d45" strokeWidth="1"/>
-          <path d="M 480 40 Q 580 20 660 60 Q 720 100 700 170 Q 660 220 580 210 Q 500 195 480 150 Q 460 100 480 40Z" fill="#1f2a40" stroke="#1e2d45" strokeWidth="1"/>
-          <circle cx="160" cy="100" r="16" fill="#ef444433" stroke="#ef4444" strokeWidth="1.5"/>
-          <text x="160" y="104" textAnchor="middle" fill="#ef4444" fontSize="9" fontFamily="sans-serif">USA</text>
-          <circle cx="620" cy="130" r="14" fill="#ef444466" stroke="#ef4444" strokeWidth="2.5"/>
-          <text x="620" y="148" textAnchor="middle" fill="#ef4444" fontSize="9" fontFamily="sans-serif">Taiwan ⚠</text>
-          <circle cx="350" cy="75" r="8" fill="#f59e0b33" stroke="#f59e0b" strokeWidth="1.5"/>
-          <text x="350" y="65" textAnchor="middle" fill="#f59e0b" fontSize="8" fontFamily="sans-serif">NL(ASML)</text>
-          <circle cx="645" cy="110" r="10" fill="#3b82f633" stroke="#3b82f6" strokeWidth="1.5"/>
-          <text x="645" y="100" textAnchor="middle" fill="#3b82f6" fontSize="8" fontFamily="sans-serif">Corea</text>
-          <line x1="620" y1="130" x2="160" y2="100" stroke="#ef444444" strokeWidth="1" strokeDasharray="4,3"/>
-          <line x1="645" y1="110" x2="160" y2="100" stroke="#3b82f644" strokeWidth="1" strokeDasharray="4,3"/>
-        </svg>
-      </div>
-    </div>
-  )
+function MiniChart({data,color='#00ff94'}){const ref=useRef();useEffect(()=>{if(!ref.current||!data?.length)return;const ctx=ref.current.getContext('2d');const prices=data.map(d=>d.close).filter(Boolean);if(!prices.length)return;const W=ref.current.width,H=ref.current.height,min=Math.min(...prices),max=Math.max(...prices),range=max-min||1;ctx.clearRect(0,0,W,H);const grad=ctx.createLinearGradient(0,0,0,H);grad.addColorStop(0,color+'44');grad.addColorStop(1,color+'00');ctx.strokeStyle=color;ctx.lineWidth=2;ctx.shadowColor=color;ctx.shadowBlur=8;ctx.beginPath();prices.forEach((p,i)=>{const x=(i/(prices.length-1))*W,y=H-((p-min)/range)*(H-20)-10;i===0?ctx.moveTo(x,y):ctx.lineTo(x,y)});ctx.stroke();ctx.shadowBlur=0;ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.closePath();ctx.fillStyle=grad;ctx.fill();ctx.fillStyle='#4a5f80';ctx.font='10px sans-serif';ctx.fillText(`$${prices[0]?.toFixed(0)}`,4,H-4);ctx.fillText(`$${prices[prices.length-1]?.toFixed(0)}`,W-42,H-4)},[data,color]);return <canvas ref={ref} width={500} height={160} style={{width:'100%',height:160}}/>}
+function ChainCol({title,items,color,dir,onCo}){return(<div style={{minWidth:150,padding:'0 8px'}}><div style={{fontSize:10,color:'#4a5f80',textTransform:'uppercase',letterSpacing:1,marginBottom:8,fontWeight:600}}>{title}</div>{items.map(n=>(<div key={n} onClick={()=>onCo(n)} style={{background:'#111c2d',border:'1px solid #1a2840',borderRadius:8,padding:'8px 12px',marginBottom:6,cursor:'pointer'}} onMouseEnter={e=>{e.currentTarget.style.borderColor=color+'66'}} onMouseLeave={e=>{e.currentTarget.style.borderColor='#1a2840'}}><div style={{fontSize:12,fontWeight:600,color:'#f0f6ff',marginBottom:2}}>{n}</div><div style={{fontSize:10,color,fontWeight:500}}>{dir}</div></div>))}</div>)}
+function Grafo({company,onCo}){
+  const ref=useRef();const[filter,setFilter]=useState('todos')
+  useEffect(()=>{if(!ref.current)return;const svg=ref.current,W=svg.clientWidth||700,H=440;svg.setAttribute('viewBox',`0 0 ${W} ${H}`);svg.innerHTML='';const nodes=[{id:company,score:90,type:'center',x:W/2,y:H/2},{id:'TSMC',score:89,type:'supplier',x:W/2-210,y:H/2-90},{id:'SK Hynix',score:85,type:'supplier',x:W/2-200,y:H/2+80},{id:'ASML',score:87,type:'supplier',x:W/2-260,y:H/2-10},{id:'Microsoft',score:95,type:'client',x:W/2+190,y:H/2-100},{id:'Meta',score:90,type:'client',x:W/2+210,y:H/2+10},{id:'Google',score:93,type:'client',x:W/2+180,y:H/2+110},{id:'Equinix',score:72,type:'indirect',x:W/2+70,y:H/2-190},{id:'Vertiv',score:82,type:'indirect',x:W/2-70,y:H/2-190},{id:'Arista',score:78,type:'indirect',x:W/2+120,y:H/2+190},{id:'Constellation',score:76,type:'indirect',x:W/2-90,y:H/2+190}];const links=[{s:'TSMC',t:company,type:'direct'},{s:'SK Hynix',t:company,type:'direct'},{s:'ASML',t:'TSMC',type:'direct'},{s:company,t:'Microsoft',type:'direct'},{s:company,t:'Meta',type:'direct'},{s:company,t:'Google',type:'direct'},{s:'Microsoft',t:'Equinix',type:'indirect'},{s:'Meta',t:'Vertiv',type:'indirect'},{s:'Google',t:'Arista',type:'indirect'},{s:'Microsoft',t:'Constellation',type:'indirect'}];const ns=nodes.reduce((a,n)=>{a[n.id]=n;return a},{});const colors={center:'#00d4ff',supplier:'#7b61ff',client:'#00ff94',indirect:'#ffd60a'};const sizes={center:30,supplier:18,client:20,indirect:15};links.forEach(l=>{const ss=ns[l.s],tt=ns[l.t];if(!ss||!tt)return;const line=document.createElementNS('http://www.w3.org/2000/svg','line');line.setAttribute('x1',ss.x);line.setAttribute('y1',ss.y);line.setAttribute('x2',tt.x);line.setAttribute('y2',tt.y);line.setAttribute('stroke',l.type==='direct'?'#00d4ff':'#7b61ff');line.setAttribute('stroke-width',l.type==='direct'?'2':'1');line.setAttribute('stroke-dasharray',l.type==='indirect'?'6,3':'none');line.setAttribute('opacity','0.5');svg.appendChild(line)});nodes.forEach(n=>{const g=document.createElementNS('http://www.w3.org/2000/svg','g');g.setAttribute('cursor','pointer');g.addEventListener('click',()=>onCo(n.id));const gl=document.createElementNS('http://www.w3.org/2000/svg','circle');gl.setAttribute('cx',n.x);gl.setAttribute('cy',n.y);gl.setAttribute('r',sizes[n.type]+8);gl.setAttribute('fill',colors[n.type]+'11');g.appendChild(gl);const c=document.createElementNS('http://www.w3.org/2000/svg','circle');c.setAttribute('cx',n.x);c.setAttribute('cy',n.y);c.setAttribute('r',sizes[n.type]);c.setAttribute('fill',colors[n.type]+'22');c.setAttribute('stroke',sc(n.score));c.setAttribute('stroke-width',n.id===company?'3':'2');c.style.filter=`drop-shadow(0 0 8px ${colors[n.type]}66)`;g.appendChild(c);const txt=document.createElementNS('http://www.w3.org/2000/svg','text');txt.setAttribute('x',n.x);txt.setAttribute('y',n.y+sizes[n.type]+16);txt.setAttribute('text-anchor','middle');txt.setAttribute('fill','#8899bb');txt.setAttribute('font-size',n.id===company?'12':'10');txt.setAttribute('font-family','sans-serif');txt.textContent=n.id;g.appendChild(txt);const score=document.createElementNS('http://www.w3.org/2000/svg','text');score.setAttribute('x',n.x);score.setAttribute('y',n.y+5);score.setAttribute('text-anchor','middle');score.setAttribute('fill',sc(n.score));score.setAttribute('font-size','12');score.setAttribute('font-weight','700');score.setAttribute('font-family','sans-serif');score.textContent=n.score;g.appendChild(score);svg.appendChild(g)})},[company])
+  return(<div><div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}}><h1 style={{fontSize:18,fontWeight:800,color:'#f0f6ff'}}>Grafo de Nodos — {company}</h1><div style={{display:'flex',gap:8}}>{[{id:'todos',l:'Todos'},{id:'direct',l:'Directas'},{id:'indirect',l:'Indirectas'},{id:'suppliers',l:'Proveedores'},{id:'clients',l:'Clientes'}].map(f=>(<span key={f.id} onClick={()=>setFilter(f.id)} style={{padding:'5px 12px',borderRadius:20,fontSize:11,cursor:'pointer',border:`1px solid ${filter===f.id?'#00d4ff':'#1a2840'}`,background:filter===f.id?'#00d4ff11':'#0d1421',color:filter===f.id?'#00d4ff':'#8899bb',fontWeight:filter===f.id?700:400}}>{f.l}</span>))}</div></div><div style={{display:'flex',gap:12,marginBottom:12,flexWrap:'wrap'}}>{[{c:'#00d4ff',l:'Directa'},{c:'#7b61ff',l:'Indirecta'},{c:'#00ff94',l:'Score alto'},{c:'#ffd60a',l:'Score medio'},{c:'#ff4444',l:'Riesgo'}].map((i,idx)=>(<span key={idx} style={{display:'flex',alignItems:'center',gap:4,fontSize:11,color:'#4a5f80'}}><span style={{width:8,height:8,borderRadius:'50%',background:i.c,display:'inline-block'}}/>{i.l}</span>))}</div><svg ref={ref} style={{width:'100%',height:440,background:'#0d1421',borderRadius:12,border:'1px solid #1a2840'}} role="img" aria-label={`Grafo ${company}`}/></div>)
 }
-
-function Feed({token}){
-  const [feed,setFeed]=useState([])
-  const [loading,setLoading]=useState(true)
-  useEffect(()=>{
-    async function load(){
-      try{const d=await api('/api/news?company=AI+infrastructure+semiconductor&type=news',{},token);setFeed(d.results||[])}catch{setFeed([])}
-      setLoading(false)
-    }
-    load()
-  },[token])
-  return(
-    <div>
-      <div style={{display:'flex',justifyContent:'space-between',marginBottom:16}}>
-        <div style={{fontSize:15,fontWeight:600,color:'#fff'}}>Feed de Novedades — Verificadas</div>
-        <div style={{fontSize:12,color:'#64748b'}}>Fuente: Tavily API</div>
-      </div>
-      {loading?<div style={{color:'#64748b',textAlign:'center',padding:'40px 0'}}>Buscando en Tavily...</div>:
-       feed.length>0?feed.map((item,i)=>(
-        <div key={i} style={{padding:'10px 12px',marginBottom:8,background:'#1a2235',borderRadius:'0 8px 8px 0',borderLeft:`3px solid ${item.impact==='high'?'#ef4444':item.impact==='medium'?'#f59e0b':'#3b82f6'}`}}>
-          <div style={{fontSize:10,color:'#64748b',marginBottom:4}}>{item.source}</div>
-          <div style={{fontSize:12,color:'#e6edf3',lineHeight:1.5,marginBottom:6}}><a href={item.url} target="_blank" rel="noopener" style={{color:'#e6edf3',textDecoration:'none'}}>{item.title}</a></div>
-          {item.snippet&&<div style={{fontSize:11,color:'#64748b'}}>{item.snippet}...</div>}
-        </div>
-       )):<div style={{color:'#64748b',textAlign:'center',padding:'40px 0'}}>No hay novedades. Verificá la API key de Tavily.</div>}
-    </div>
-  )
+function Comparar({onCo}){
+  const cos=['NVIDIA','AMD','Broadcom'];const data={NVIDIA:{score:93,price:'$875',sentiment:'78/100',riesgo:'Medio-Alto',pais:'USA'},AMD:{score:77,price:'$178',sentiment:'65/100',riesgo:'Medio',pais:'USA'},Broadcom:{score:83,price:'$1,432',sentiment:'71/100',riesgo:'Medio',pais:'USA'}};const metrics=[['score','Score'],['price','Precio'],['sentiment','Sentiment'],['riesgo','Riesgo'],['pais','País']]
+  return(<div><div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:24}}><h1 style={{fontSize:18,fontWeight:800,color:'#f0f6ff'}}>Comparativa de Empresas</h1><button style={{padding:'8px 16px',borderRadius:8,border:'1px solid #00d4ff44',background:'#00d4ff11',color:'#00d4ff',cursor:'pointer',fontSize:12,fontWeight:600}}>+ Agregar empresa</button></div><div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:14}}>{cos.map((c,i)=>(<div key={c} onClick={()=>onCo(c)} style={{background:'#0d1421',border:`1px solid ${i===0?'#00d4ff44':'#1a2840'}`,borderRadius:14,padding:18,cursor:'pointer'}} onMouseEnter={e=>e.currentTarget.style.transform='translateY(-2px)'} onMouseLeave={e=>e.currentTarget.style.transform='translateY(0)'}>{i===0&&<div style={{padding:'3px 10px',borderRadius:12,fontSize:10,fontWeight:700,background:'#00d4ff11',color:'#00d4ff',border:'1px solid #00d4ff33',display:'inline-block',marginBottom:12}}>Mayor score</div>}<div style={{display:'flex',alignItems:'center',gap:10,marginBottom:16}}><div style={{width:36,height:36,borderRadius:8,background:lc(c)+'22',color:lc(c),display:'flex',alignItems:'center',justifyContent:'center',fontSize:13,fontWeight:800,border:`1px solid ${lc(c)}44`}}>{c.substring(0,2).toUpperCase()}</div><div style={{fontSize:15,fontWeight:700,color:'#f0f6ff'}}>{c}</div></div>{metrics.map(([key,label])=>(<div key={key} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'8px 0',borderBottom:'1px solid #111c2d'}}><span style={{fontSize:11,color:'#4a5f80'}}>{label}</span><span style={{fontSize:12,fontWeight:600,color:key==='score'?sc(data[c].score):'#f0f6ff'}}>{data[c][key]}</span></div>))}</div>))}</div></div>)
 }
-
-function Watchlist({onCo}){
-  return(
-    <div>
-      <div style={{display:'flex',justifyContent:'space-between',marginBottom:16}}>
-        <div style={{fontSize:15,fontWeight:600,color:'#fff'}}>Mi Watchlist</div>
-        <button style={{display:'inline-flex',padding:'6px 12px',borderRadius:8,fontSize:12,cursor:'pointer',background:'#3b82f6',border:'none',color:'#fff'}}>+ Agregar</button>
-      </div>
-      {['NVIDIA','Constellation Energy','Astera Labs','Vertiv Holdings','TSMC'].map(n=>(
-        <div key={n} style={{display:'flex',alignItems:'center',gap:12,padding:'10px 12px',background:'#1a2235',borderRadius:8,marginBottom:6,cursor:'pointer',border:'1px solid #1e2d45'}} onClick={()=>onCo(n)}>
-          <div style={{width:32,height:32,borderRadius:6,background:lc(n)+'22',color:lc(n),display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:700}}>{n.substring(0,2).toUpperCase()}</div>
-          <div style={{flex:1}}><div style={{fontSize:13,fontWeight:500,color:'#e6edf3'}}>{n}</div><div style={{fontSize:11,color:'#64748b'}}>Alertas activas</div></div>
-          <span style={{padding:'2px 8px',borderRadius:12,fontSize:10,background:'#0d2d1f',color:'#10b981',border:'1px solid #155e40'}}>Activo</span>
-        </div>
-      ))}
-    </div>
-  )
-}
-
-function AlertsView({alerts,notifs}){
-  const all=[
-    {t:'Tavily API conectada',d:'Noticias en tiempo real desde Reuters, Bloomberg, SEC.gov',time:'Ahora',type:'success'},
-    {t:'Yahoo Finance conectada',d:'Precios con delay 15 min para NYSE/NASDAQ',time:'Ahora',type:'success'},
-    ...notifs.map(n=>({t:n.target,d:n.message,time:new Date(n.created_at).toLocaleString('es-AR'),type:'info'})),
-    ...alerts.map(a=>({t:a.target,d:`Alerta ${a.target_type} via ${a.channel}`,time:new Date(a.created_at).toLocaleString('es-AR'),type:'info'})),
-  ]
-  return(
-    <div>
-      <div style={{fontSize:15,fontWeight:600,color:'#fff',marginBottom:16}}>Centro de Alertas</div>
-      {all.map((a,i)=>(
-        <div key={i} style={{padding:'10px 12px',borderRadius:8,marginBottom:6,borderLeft:`3px solid ${a.type==='success'?'#10b981':a.type==='warning'?'#f59e0b':a.type==='danger'?'#ef4444':'#3b82f6'}`,background:a.type==='success'?'#001a0e':'#1a2235'}}>
-          <div style={{fontSize:12,fontWeight:500,color:'#e6edf3'}}>{a.t}</div>
-          <div style={{fontSize:11,color:'#64748b',marginTop:2}}>{a.d}</div>
-          <div style={{fontSize:10,color:'#64748b',marginTop:4}}>{a.time}</div>
-        </div>
-      ))}
-    </div>
-  )
+function Mapa(){return(<div><h1 style={{fontSize:18,fontWeight:800,color:'#f0f6ff',marginBottom:6}}>Mapa Geográfico</h1><div style={{fontSize:12,color:'#4a5f80',marginBottom:20}}>Concentración de la cadena de suministro de IA por región</div><div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:12,marginBottom:20}}>{[{l:'Concentración en Taiwan',v:'68%',c:'#ff4444',sub:'⚠ Riesgo geopolítico crítico'},{l:'Dependencia de USA',v:'82%',c:'#f0f6ff',sub:'Diseño + clientes finales'},{l:'Zonas de riesgo',v:'14',c:'#ffd60a',sub:'Taiwan · Corea · China'}].map((m,i)=>(<div key={i} style={{background:'#0d1421',border:'1px solid #1a2840',borderRadius:10,padding:16}}><div style={{fontSize:11,color:'#4a5f80',marginBottom:6,textTransform:'uppercase',letterSpacing:'0.5px'}}>{m.l}</div><div style={{fontSize:24,fontWeight:800,color:m.c,marginBottom:4}}>{m.v}</div><div style={{fontSize:11,color:'#4a5f80'}}>{m.sub}</div></div>))}</div><div style={{background:'#0d1421',border:'1px solid #1a2840',borderRadius:12,overflow:'hidden'}}><svg width="100%"height="320"viewBox="0 0 900 320"><rect width="900"height="320"fill="#0d1421"/><path d="M 70 70 Q 140 50 210 70 Q 230 110 210 160 Q 160 180 120 160 Q 75 140 70 70Z"fill="#111c2d"stroke="#1a2840"strokeWidth="1"/><path d="M 230 50 Q 350 25 450 70 Q 490 95 470 160 Q 420 200 350 195 Q 280 185 235 140 Q 215 110 230 50Z"fill="#111c2d"stroke="#1a2840"strokeWidth="1"/><path d="M 555 50 Q 670 25 760 70 Q 825 110 805 200 Q 760 255 665 248 Q 568 235 550 175 Q 530 115 555 50Z"fill="#111c2d"stroke="#1a2840"strokeWidth="1"/><circle cx="185"cy="115"r="20"fill="#ff444422"stroke="#ff4444"strokeWidth="2"/><circle cx="185"cy="115"r="8"fill="#ff4444"/><text x="185"y="145"textAnchor="middle"fill="#ff4444"fontSize="10"fontFamily="sans-serif"fontWeight="bold">USA</text><circle cx="715"cy="155"r="16"fill="#ff444433"stroke="#ff4444"strokeWidth="2.5"/><circle cx="715"cy="155"r="6"fill="#ff4444"/><text x="715"y="180"textAnchor="middle"fill="#ff4444"fontSize="10"fontFamily="sans-serif"fontWeight="bold">Taiwan ⚠</text><circle cx="405"cy="88"r="9"fill="#ffd60a22"stroke="#ffd60a"strokeWidth="1.5"/><text x="405"y="76"textAnchor="middle"fill="#ffd60a"fontSize="9"fontFamily="sans-serif">NL (ASML)</text><circle cx="745"cy="130"r="12"fill="#00d4ff22"stroke="#00d4ff"strokeWidth="1.5"/><text x="745"y="118"textAnchor="middle"fill="#00d4ff"fontSize="9"fontFamily="sans-serif">Corea</text><line x1="715"y1="155"x2="185"y2="115"stroke="#ff444433"strokeWidth="1.5"strokeDasharray="6,4"/><line x1="745"y1="130"x2="185"y2="115"stroke="#00d4ff33"strokeWidth="1"strokeDasharray="6,4"/></svg><div style={{padding:'12px 16px',display:'flex',gap:20,borderTop:'1px solid #111c2d'}}>{[{c:'#ff4444',l:'Riesgo geopolítico alto'},{c:'#ffd60a',l:'Riesgo medio'},{c:'#00d4ff',l:'Solo diseño/clientes'}].map((i,idx)=>(<span key={idx} style={{fontSize:11,color:i.c,display:'flex',alignItems:'center',gap:5}}><span style={{width:8,height:8,borderRadius:'50%',background:i.c,display:'inline-block'}}/>{i.l}</span>))}</div></div></div>)}
+function Novedades({news,loading,onRefresh}){return(<div><div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20}}><div><h1 style={{fontSize:18,fontWeight:800,color:'#f0f6ff',marginBottom:4}}>Novedades verificadas</h1><div style={{display:'flex',alignItems:'center',gap:8}}><LiveDot/><span style={{fontSize:12,color:'#4a5f80'}}>Tavily · Reuters · Bloomberg · SEC</span></div></div><button onClick={onRefresh} style={{padding:'8px 16px',borderRadius:8,border:'1px solid #1a2840',background:'#0d1421',color:'#8899bb',cursor:'pointer',fontSize:12}}>↺ Actualizar</button></div>{loading?(<div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:12,padding:'60px 0',color:'#4a5f80'}}><span style={{animation:'spin 1s linear infinite',fontSize:28}}>↺</span><span>Buscando novedades en Tavily...</span></div>):news.length>0?news.map((item,i)=>(<div key={i} style={{padding:'14px 18px',marginBottom:10,background:'#0d1421',border:'1px solid #1a2840',borderRadius:12,borderLeft:`4px solid ${item.impact==='high'?'#ff4444':item.impact==='medium'?'#ffd60a':'#00d4ff'}`}}><div style={{display:'flex',alignItems:'center',gap:10,marginBottom:8}}><span style={{fontSize:11,color:'#4a5f80'}}>{item.source}</span><span style={{padding:'2px 8px',borderRadius:12,fontSize:10,fontWeight:700,background:item.impact==='high'?'#1f0000':item.impact==='medium'?'#1f1500':'#001520',color:item.impact==='high'?'#ff4444':item.impact==='medium'?'#ffd60a':'#00d4ff'}}>{item.impact==='high'?'IMPACTO ALTO':item.impact==='medium'?'IMPACTO MEDIO':'BAJO'}</span>{item.published_date&&<span style={{fontSize:10,color:'#2a3f60',marginLeft:'auto'}}>{item.published_date}</span>}</div><a href={item.url}target="_blank"rel="noopener"style={{fontSize:14,color:'#f0f6ff',lineHeight:1.6,display:'block',marginBottom:8,fontWeight:500,textDecoration:'none'}}>{item.title}</a>{item.snippet&&<div style={{fontSize:12,color:'#4a5f80',lineHeight:1.6}}>{item.snippet}...</div>}</div>)):(<div style={{textAlign:'center',padding:'60px 0',color:'#4a5f80'}}><div style={{fontSize:32,marginBottom:16}}>≡</div><div style={{fontSize:16,color:'#8899bb',marginBottom:8}}>No hay novedades disponibles</div></div>)}</div>)}
+function Watchlist({onCo}){const items=['NVIDIA','Constellation Energy','Astera Labs','Vertiv Holdings','TSMC','Arista Networks'];return(<div><div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:24}}><h1 style={{fontSize:18,fontWeight:800,color:'#f0f6ff'}}>Mi Watchlist</h1><button style={{padding:'8px 16px',borderRadius:8,border:'none',background:'linear-gradient(90deg,#00d4ff,#7b61ff)',color:'#060b14',cursor:'pointer',fontSize:12,fontWeight:700}}>+ Agregar empresa</button></div>{items.map(n=>(<div key={n} onClick={()=>onCo(n)} style={{display:'flex',alignItems:'center',gap:14,padding:'12px 16px',background:'#0d1421',border:'1px solid #1a2840',borderRadius:10,marginBottom:8,cursor:'pointer'}} onMouseEnter={e=>{e.currentTarget.style.borderColor='#00d4ff44';e.currentTarget.style.transform='translateX(4px)'}} onMouseLeave={e=>{e.currentTarget.style.borderColor='#1a2840';e.currentTarget.style.transform='translateX(0)'}}><div style={{width:36,height:36,borderRadius:8,background:lc(n)+'22',border:`1px solid ${lc(n)}44`,color:lc(n),display:'flex',alignItems:'center',justifyContent:'center',fontSize:12,fontWeight:800}}>{n.substring(0,2).toUpperCase()}</div><div style={{flex:1}}><div style={{fontSize:14,fontWeight:600,color:'#f0f6ff',marginBottom:2}}>{n}</div><div style={{fontSize:11,color:'#4a5f80'}}>Alertas activas · Actualización cada 60s</div></div><span style={{padding:'3px 10px',borderRadius:12,fontSize:10,fontWeight:700,background:'#00ff9411',color:'#00ff94',border:'1px solid #00ff9433'}}>Activo</span><span style={{color:'#00d4ff',fontSize:16}}>→</span></div>))}<div style={{background:'#0d1421',border:'1px solid #1a2840',borderRadius:10,padding:16,marginTop:16}}><div style={{fontSize:13,fontWeight:600,color:'#f0f6ff',marginBottom:6}}>Resumen diario por email</div><div style={{fontSize:12,color:'#4a5f80',lineHeight:1.6}}>Próximo envío: 8:00 AM · Novedades verificadas, cambios de score y alertas.</div></div></div>)}
+function Alertas({alerts,notifs,token}){
+  const[form,setForm]=useState({target:'',type:'trend',channel:'in_app'});const[saving,setSaving]=useState(false)
+  async function create(){if(!form.target.trim())return;setSaving(true);try{await api('/api/alerts',{method:'POST',body:JSON.stringify({target:form.target,target_type:form.type,channel:form.channel})},token);setForm({target:'',type:'trend',channel:'in_app'})}catch{};setSaving(false)}
+  const all=[{t:'Tavily API conectada',d:'Noticias en tiempo real desde Reuters, Bloomberg, SEC.gov',time:'Ahora mismo',type:'success'},{t:'Yahoo Finance activa',d:'Precios con delay 15 min para NYSE y NASDAQ',time:'Ahora mismo',type:'success'},...notifs.map(n=>({t:n.target,d:n.message,time:new Date(n.created_at).toLocaleString('es-AR'),type:'info'})),...alerts.map(a=>({t:`Alerta: ${a.target}`,d:`${a.target_type} · ${a.channel}`,time:new Date(a.created_at).toLocaleString('es-AR'),type:'info'}))]
+  return(<div><h1 style={{fontSize:18,fontWeight:800,color:'#f0f6ff',marginBottom:20}}>Centro de Alertas</h1><div style={{background:'#0d1421',border:'1px solid #1a2840',borderRadius:12,padding:16,marginBottom:24}}><div style={{fontSize:13,fontWeight:600,color:'#f0f6ff',marginBottom:14}}>Nueva alerta</div><div style={{display:'flex',gap:10,flexWrap:'wrap'}}><input value={form.target} onChange={e=>setForm(f=>({...f,target:e.target.value}))} onKeyDown={e=>e.key==='Enter'&&create()} style={{flex:1,minWidth:200,background:'#111c2d',border:'1px solid #1a2840',borderRadius:8,padding:'8px 14px',color:'#f0f6ff',fontSize:13,outline:'none'}} placeholder='Empresa o tendencia (ej: nvidia, energía nuclear)'/><select value={form.type} onChange={e=>setForm(f=>({...f,type:e.target.value}))} style={{background:'#111c2d',border:'1px solid #1a2840',borderRadius:8,padding:'8px 12px',color:'#f0f6ff',fontSize:12,outline:'none'}}><option value="trend">Tendencia</option><option value="company">Empresa</option></select><select value={form.channel} onChange={e=>setForm(f=>({...f,channel:e.target.value}))} style={{background:'#111c2d',border:'1px solid #1a2840',borderRadius:8,padding:'8px 12px',color:'#f0f6ff',fontSize:12,outline:'none'}}><option value="in_app">En la app</option><option value="email">Por email</option></select><button onClick={create} style={{padding:'8px 18px',borderRadius:8,border:'none',background:'linear-gradient(90deg,#00d4ff,#7b61ff)',color:'#060b14',cursor:'pointer',fontSize:12,fontWeight:700}}>{saving?'Guardando...':'+ Crear alerta'}</button></div></div>{all.map((a,i)=>(<div key={i} style={{padding:'12px 16px',borderRadius:10,marginBottom:8,borderLeft:`4px solid ${a.type==='success'?'#00ff94':'#00d4ff'}`,background:a.type==='success'?'#001508':'#0d1421',border:'1px solid #1a2840'}}><div style={{fontSize:12,fontWeight:600,color:'#f0f6ff',marginBottom:3}}>{a.t}</div><div style={{fontSize:11,color:'#4a5f80',marginBottom:4}}>{a.d}</div><div style={{fontSize:10,color:'#2a3f60'}}>{a.time}</div></div>))}</div>)
 }
