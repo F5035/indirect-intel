@@ -2,9 +2,7 @@ import { NextResponse } from 'next/server'
 import { getAuthUser, requireSubscription } from '@/lib/auth'
 
 export async function GET(request) {
-  const user = await getAuthUser(request)
-  if (!user) return NextResponse.json({ detail: 'No autorizado' }, { status: 401 })
-  if (!requireSubscription(user)) return NextResponse.json({ detail: 'Suscripción requerida' }, { status: 403 })
+  // public endpoint - no auth required
   const { searchParams } = new URL(request.url)
   const company = searchParams.get('company') || 'NVIDIA AI infrastructure'
   const type = searchParams.get('type') || 'news'

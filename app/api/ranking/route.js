@@ -2,9 +2,7 @@ import { NextResponse } from 'next/server'
 import { getAuthUser, requireSubscription } from '@/lib/auth'
 import { COMPANIES, computeScore } from '@/lib/data'
 export async function GET(request) {
-  const user = await getAuthUser(request)
-  if (!user) return NextResponse.json({ detail: 'No autorizado' }, { status: 401 })
-  if (!requireSubscription(user)) return NextResponse.json({ detail: 'Suscripción requerida' }, { status: 403 })
+  // public endpoint - no auth required
   try {
     const res = await fetch('https://api.tavily.com/search', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ api_key: process.env.TAVILY_API_KEY, query: 'AI infrastructure semiconductor data center news 2025', search_depth: 'basic', max_results: 10 }) })
     const tData = await res.json()
