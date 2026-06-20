@@ -1,5 +1,14 @@
 import './globals.css'
-export const metadata = { title: 'Indirect Intel — IA Infrastructure', description: 'Inteligencia de inversión indirecta en IA' }
+
+export const metadata = {
+  title: 'Supply Alpha — Indirect Intelligence Platform',
+  description: 'Discover the companies behind the biggest trends. Map ecosystems, track federal contracts, and analyze indirect exposure across AI Infrastructure, Defense Tech, Space Economy and more.',
+}
+
 export default function RootLayout({ children }) {
-  return <html lang="es"><body>{children}</body></html>
+  return (
+    <html lang="en">
+      <body>{children}</body>
+    </html>
+  )
 }

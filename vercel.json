@@ -1,3 +1,16 @@
 {
-  "framework": "nextjs"
+  "crons": [
+    {
+      "path": "/api/cron/contracts",
+      "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron/sec",
+      "schedule": "0 */6 * * *"
+    },
+    {
+      "path": "/api/cron/social",
+      "schedule": "0 */6 * * *"
+    }
+  ]
 }
